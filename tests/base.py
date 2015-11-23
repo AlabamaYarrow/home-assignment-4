@@ -183,12 +183,12 @@ class LetterToolbar(Component):
     PREV = '//div[@data-name="letter_prev"]'
 
     def prev_letter_is_disabled(self):
-        is_disabled = self.driver.find_element_by_xpath(self.PREV).get_attribute('disabled')
-        return is_disabled == 'disabled'
+        is_disabled = self.driver.find_element_by_xpath(self.PREV).get_attribute('aria-disabled')
+        return is_disabled == u'disabled'
 
     def next_letter_is_disabled(self):
-        is_disabled = self.driver.find_element_by_xpath(self.NEXT).get_attribute('disabled')
-        return is_disabled == 'disabled'
+        is_disabled = self.driver.find_element_by_xpath(self.NEXT).get_attribute('aria-disabled')
+        return is_disabled == u'disabled'
 
     def get_prev_letter(self):
         return self.driver.find_element_by_xpath(self.PREV).click()

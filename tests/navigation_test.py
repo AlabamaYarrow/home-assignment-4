@@ -116,7 +116,7 @@ class NavigateNoForwardTest(unittest.TestCase, NavigationCommon):
         sent_page.open_letter('3')
 
         letter_page = LetterPage(self.driver)
-        is_disabled = letter_page.letter_toolbar.next_letter_is_disabled()
+        is_disabled = letter_page.letter_toolbar.prev_letter_is_disabled()
         self.assertEquals(True, is_disabled)
 
     def tearDown(self):
