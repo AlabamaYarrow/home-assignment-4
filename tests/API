@@ -13,7 +13,8 @@ InboxPage.send_letter("subject_name") -- отправить письма с те
 
 __Страница отправки письма__
 SentLetterPage
-SentLetterPage.data.get_email() -- получить email получателей
+SentLetterPage.data.get_email_to() -- получить email из поля кому
+SentLetterPage.data.get_email_copy() -- получить email из поля копия
 SentLetterPage.data.get_subject() -- получить тему письма
 SentLetterPage.data.get_body() -- получить содержимое письма
 
@@ -31,3 +32,6 @@ LetterPage.letter_toolbar.get_prev_letter() -- перейти к предыду�
 LetterPage.letter_toolbar.get_next_letter() -- перейти к следующему письму
 LetterPage.letter_toolbar.reply() -- ответить
 LetterPage.letter_toolbar.reply_all() -- ответить всем
+LetterPage.letter_toolbar.forward() -- переслать
+-- LetterPage.letter_toolbar.delete() -- удалить письмо
+-- LetterPage.letter_toolbar.archive() -- в архив

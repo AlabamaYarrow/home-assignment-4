@@ -39,14 +39,19 @@ class ReviewTest(unittest.TestCase):
         time.sleep(1)
         letterPage = LetterPage(self.driver)
 
+        # letterPage.letter_toolbar.delete()
+
         # reply/reply_all
 
         letterPage.letter_toolbar.reply()
         # letterPage.letter_toolbar.reply_all()
-        time.sleep(2)
+        # letterPage.letter_toolbar.delete()
+        time.sleep(3)
 
         sent_letter_page = SentLetterPage(self.driver)
-        print sent_letter_page.data.get_email()
+
+        print sent_letter_page.data.get_email_to()
+        print sent_letter_page.data.get_email_copy()
         print sent_letter_page.data.get_subject()
         print sent_letter_page.data.get_body()
 
@@ -57,6 +62,3 @@ class ReviewTest(unittest.TestCase):
         # print letterPage.letter_head.get_subject()
         # letterPage.letter_toolbar.get_next_letter()
         # print letterPage.letter_head.get_subject()
-
-        
-

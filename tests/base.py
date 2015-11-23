@@ -121,9 +121,8 @@ class SentPage(Page, ClearBoxMixin):
                 self.open()
 
     def open_letter(self, subject):
-        letter = '//a[@data-subject="'+subject+'"]'
-        url = self.driver.find_element_by_xpath(letter).get_attribute('href')
-        self.driver.get(url)
+        LETTER = '//a[@data-subject="'+subject+'"]'
+        self.driver.find_element_by_xpath(LETTER).click()
 
 
 class LetterPage(Page):
@@ -178,42 +177,69 @@ class LetterHead(Component):
 
 
 class LetterToolbar(Component):
+    TOOLBAR = '//div[@data-mnemo="toolbar-letter"]'
     NEXT = '//div[@data-name="letter_next"]'
     PREV = '//div[@data-name="letter_prev"]'
     REPLY = '//span[text() = "Ответить"]'
     REPLYALL = '//span[text() = "Ответить всем"]'
+    FORWARD = '//span[text() = "Переслать"]'
+    DELETE = '//span[text() = "Удалить"]'
+    ARCHIVE = '//span[text() = "В архив"]'
     ATTRLETTER = 'aria-disabled'
 
     def prev_letter_is_disabled(self):
-        is_disabled = self.driver.find_element_by_xpath(self.PREV).get_attribute(ATTRLETTER)
+        toolbar = self.driver.find_element_by_xpath(self.TOOLBAR)
+        is_disabled = toolbar.find_element_by_xpath(self.PREV).get_attribute(ATTRLETTER)
         return is_disabled == u'disabled'
 
     def next_letter_is_disabled(self):
-        is_disabled = self.driver.find_element_by_xpath(self.NEXT).get_attribute(ATTRLETTER)
+        toolbar = self.driver.find_element_by_xpath(self.TOOLBAR)
+        is_disabled = toolbar.find_element_by_xpath(self.NEXT).get_attribute(ATTRLETTER)
         return is_disabled == u'disabled'
 
     def get_prev_letter(self):
-        return self.driver.find_element_by_xpath(self.PREV).click()
+        toolbar = self.driver.find_element_by_xpath(self.TOOLBAR)
+        return toolbar.find_element_by_xpath(self.PREV).click()
 
     def get_next_letter(self):
-        return self.driver.find_element_by_xpath(self.NEXT).click()
+        toolbar = self.driver.find_element_by_xpath(self.TOOLBAR)
+        return toolbar.find_element_by_xpath(self.NEXT).click()
 
     def reply(self):
-        return self.driver.find_element_by_xpath(self.REPLY).click()
+        toolbar = self.driver.find_element_by_xpath(self.TOOLBAR)
+        toolbar.find_element_by_xpath(self.REPLY).click()
 
     def reply_all(self):
-        return self.driver.find_element_by_xpath(self.REPLYALL).click()
+        toolbar = self.driver.find_element_by_xpath(self.TOOLBAR)
+        toolbar.find_element_by_xpath(self.REPLYALL).click()
 
+    def forward(self):
+        toolbar = self.driver.find_element_by_xpath(self.TOOLBAR)
+        toolbar.find_element_by_xpath(self.FORWARD).click()
+
+    # def delete(self):
+    #     toolbar = self.driver.find_element_by_xpath(self.TOOLBAR)
+    #     delete = toolbar.find_element_by_xpath(self.DELETE)
+    #     delete.click()
+
+    # def archive(self):
+    #     toolbar = self.driver.find_element_by_xpath(self.TOOLBAR)
+    #     toolbar.find_element_by_xpath(self.ARCHIVE).click()
 
 class SentLetterData(Component):
-    EMAILBLOCK = '//div[contains(@class,"js-row-To")]'
+    EMAILBLOCKTO = '//div[contains(@class,"js-row-To")]'
+    EMAILBLOCKCOPY = '//div[contains(@class,"js-row-CC")]'
     EMAILFIELD = '//div[contains(@class,"compose__header__field__box")]'
     SUBJECTFIELD = '//input[@name="Subject"]'
     BODYFRAME = '//iframe[starts-with(@id,"compose_")]'
     BODELETTER = '//body'
 
-    def get_email(self):
-        emailBlock = self.driver.find_element_by_xpath(self.EMAILBLOCK)
+    def get_email_to(self):
+        emailBlock = self.driver.find_element_by_xpath(self.EMAILBLOCKTO)
+        return emailBlock.find_element_by_xpath(self.EMAILFIELD).text
+
+    def get_email_copy(self):
+        emailBlock = self.driver.find_element_by_xpath(self.EMAILBLOCKCOPY)
         return emailBlock.find_element_by_xpath(self.EMAILFIELD).text
 
     def get_subject(self):
