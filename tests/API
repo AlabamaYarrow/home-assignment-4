@@ -1,0 +1,33 @@
+__Авторизация__
+AuthForm.set_login(login)
+AuthForm.set_password(pwd)
+AuthForm.submit()
+
+ClearBoxMixin
+
+__Страница почтового ящика__
+InboxPage
+InboxPage.top_status.get_email() -- почта аккаунта в строке статуса
+InboxPage.folders.get_sent_inbox() -- войти в отправленные _SentPage_
+InboxPage.send_letter("subject_name") -- отправить письма с темой
+
+__Страница отправки письма__
+SentLetterPage
+SentLetterPage.data.get_email() -- получить email получателей
+SentLetterPage.data.get_subject() -- получить тему письма
+SentLetterPage.data.get_body() -- получить содержимое письма
+
+__Страница отправленных писем__
+SentPage
+SentPage.wait_for_letter("subject_name")
+SentPage.open_letter("subject_name") -- открыть письмо с темой
+
+__Страница просмотра письма__
+LetterPage
+LetterPage.letter_head.get_subject() -- получить тему письма
+LetterPage.letter_toolbar.prev_letter_is_disabled() -- проверить можно ли перейти к предыдущему письму
+LetterPage.letter_toolbar.next_letter_is_disabled() -- проверить можно ли перейти к следующему письму
+LetterPage.letter_toolbar.get_prev_letter() -- перейти к предыдущему письму
+LetterPage.letter_toolbar.get_next_letter() -- перейти к следующему письму
+LetterPage.letter_toolbar.reply() -- ответить
+LetterPage.letter_toolbar.reply_all() -- ответить всем
