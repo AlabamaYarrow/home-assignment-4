@@ -88,6 +88,14 @@ class InboxPage(Page):
         )
 
 
+class SentLetterPage(Page):
+    PATH = ''
+
+    @property
+    def data(self):
+        return SentLetterData(self.driver)
+
+
 class SentPage(Page):
     PATH = '/messages/sent/'
 
@@ -182,13 +190,16 @@ class LetterHead(Component):
 class LetterToolbar(Component):
     NEXT = '//div[@data-name="letter_next"]'
     PREV = '//div[@data-name="letter_prev"]'
+    REPLY = '//span[text() = "Ответить"]'
+    REPLY = '//span[text() = "Ответить всем"]'
+    ATTRLETTER = 'aria-disabled'
 
     def prev_letter_is_disabled(self):
-        is_disabled = self.driver.find_element_by_xpath(self.PREV).get_attribute('aria-disabled')
+        is_disabled = self.driver.find_element_by_xpath(self.PREV).get_attribute(ATTRLETTER)
         return is_disabled == u'disabled'
 
     def next_letter_is_disabled(self):
-        is_disabled = self.driver.find_element_by_xpath(self.NEXT).get_attribute('aria-disabled')
+        is_disabled = self.driver.find_element_by_xpath(self.NEXT).get_attribute(ATTRLETTER)
         return is_disabled == u'disabled'
 
     def get_prev_letter(self):
@@ -196,3 +207,28 @@ class LetterToolbar(Component):
 
     def get_next_letter(self):
         return self.driver.find_element_by_xpath(self.NEXT).click()
+
+    def reply(self):
+        return self.driver.find_element_by_xpath(self.REPLY).click()
+
+    def reply_all(self):
+        return self.driver.find_element_by_xpath(self.REPLY).click()
+
+
+class SentLetterData(Component):
+    EMAILBLOCK = '//div[contains(@class,"js-row-To")]'
+    EMAILFIELD = '//div[contains(@class,"compose__header__field__box")]'
+    SUBJECTFIELD = '//input[@name="Subject"]'
+    BODYFRAME = '//iframe[starts-with(@id,"compose_")]'
+    BODELETTER = '//body'
+
+    def get_email(self):
+        emailBlock = self.driver.find_element_by_xpath(self.EMAILBLOCK)
+        return emailBlock.find_element_by_xpath(self.EMAILFIELD).text
+
+    def get_subject(self):
+        return self.driver.find_element_by_xpath(self.SUBJECTFIELD).get_attribute("value")
+
+    def get_body(self):
+        self.driver.switch_to.frame(self.driver.find_element_by_xpath(self.BODYFRAME))
+        return self.driver.find_element_by_xpath(self.BODELETTER).text
