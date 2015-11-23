@@ -2,11 +2,19 @@
 
 import os
 
-import unittest
 import urlparse
+
+import unittest
 
 from selenium.webdriver import DesiredCapabilities, Remote
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.common.exceptions import NoSuchElementException
+
+
+USER_EMAIL = os.environ['TTHA4USER']
+PASSWORD = os.environ['TTHA4PASSWORD']
+BROWSER = os.environ.get('TTHA4BROWSER', 'CHROME')
+
 
 class Page(object):
     BASE_URL = 'https://e.mail.ru/'
@@ -20,9 +28,11 @@ class Page(object):
         self.driver.get(url)
         self.driver.maximize_window()
 
+
 class Component(object):
     def __init__(self, driver):
         self.driver = driver
+
 
 class AuthPage(Page):
     PATH = ''
@@ -30,6 +40,12 @@ class AuthPage(Page):
     @property
     def form(self):
         return AuthForm(self.driver)
+
+    def authenticate(self):
+        self.form.set_login(USER_EMAIL)
+        self.form.set_password(PASSWORD)
+        self.form.submit()
+
 
 class InboxPage(Page):
     PATH = ''
@@ -71,13 +87,22 @@ class InboxPage(Page):
             lambda d: d.find_element_by_xpath(SENTSTATUS)
         )
 
+
 class SentPage(Page):
     PATH = '/messages/sent/'
 
-    def open_letter(self, subject):
-        LETTER = '//a[@data-subject="'+subject+'"]'
+    def wait_for_letter(self, subject):
+        letter = '//a[@data-subject="'+subject+'"]'
+        while True:
+            try:
+                self.driver.find_element_by_xpath(letter)
+                break
+            except NoSuchElementException:
+                self.open()
 
-        self.driver.find_element_by_xpath(LETTER).click()
+    def open_letter(self, subject):
+        letter = '//a[@data-subject="'+subject+'"]'
+        self.driver.find_element_by_xpath(letter).click()
 
     def clear_box(self):
         CHECKBOX = '//div[@class="b-checkbox__checkmark"]'
@@ -89,6 +114,7 @@ class SentPage(Page):
 
         self.driver.find_element_by_xpath(CHECKBOX).click()
         self.driver.find_element_by_xpath(DELETEBTN).click()
+
 
 class LetterPage(Page):
     PATH = ''
@@ -112,6 +138,7 @@ class LetterPage(Page):
         self.driver.find_element_by_xpath(CHECKBOX).click()
         self.driver.find_element_by_xpath(DELETEBTN).click()
 
+
 class AuthForm(Component):
     LOGIN = '//input[@name="Login"]'
     PASSWORD = '//input[@name="Password"]'
@@ -126,17 +153,20 @@ class AuthForm(Component):
     def submit(self):
         self.driver.find_element_by_xpath(self.SUBMIT).click()
 
+
 class TopStatus(Component):
     EMAIL = '//i[@id="PH_user-email"]'
 
     def get_email(self):
         return self.driver.find_element_by_xpath(self.EMAIL).text
 
+
 class Folders(Component):
     SENTFOLDER = '//i[contains(@class, "ico_folder_send")]'
     
     def get_sent_inbox(self):
         self.driver.find_element_by_xpath(self.SENTFOLDER).click()
+
 
 class LetterHead(Component):
     SUBJECT = '//div[@class="b-letter__head__subj__text"]'
@@ -147,12 +177,21 @@ class LetterHead(Component):
         )
         return self.driver.find_element_by_xpath(self.SUBJECT).text
 
+
 class LetterToolbar(Component):
-    PREV = '//i[contains(@class, "ico_toolbar_arrow_up")]'
-    PREV = '//i[contains(@class, "ico_toolbar_arrow_down")]'
-    
+    NEXT = '//div[@data-name="letter_next"]'
+    PREV = '//div[@data-name="letter_prev"]'
+
+    def prev_letter_is_disabled(self):
+        is_disabled = self.driver.find_element_by_xpath(self.PREV).get_attribute('disabled')
+        return is_disabled == 'disabled'
+
+    def next_letter_is_disabled(self):
+        is_disabled = self.driver.find_element_by_xpath(self.NEXT).get_attribute('disabled')
+        return is_disabled == 'disabled'
+
     def get_prev_letter(self):
-        self.driver.find_element_by_xpath(self.PREV).click()
+        return self.driver.find_element_by_xpath(self.PREV).click()
 
     def get_next_letter(self):
-        self.driver.find_element_by_xpath(self.PREV).click()
+        return self.driver.find_element_by_xpath(self.NEXT).click()
