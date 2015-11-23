@@ -4,7 +4,7 @@ import sys
 import unittest
 
 from tests.review_test import ReviewTest
-from tests import auth_test, navigation_test
+from tests import auth_test, navigation_test, reply_test
 
 
 if __name__ == '__main__':
@@ -21,6 +21,8 @@ if __name__ == '__main__':
         # unittest.makeSuite(navigation_test.NavigateMultipleNextTest),
         # unittest.makeSuite(navigation_test.NavigateReturnNextTest),
         # unittest.makeSuite(navigation_test.NavigateNoNextTest),
+
+        unittest.makeSuite(reply_test.ReplyTest),
 
     ))
     result = unittest.TextTestRunner().run(suite)
