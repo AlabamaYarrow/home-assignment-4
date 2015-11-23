@@ -41,7 +41,7 @@ class NavigatePreviousTest(unittest.TestCase, NavigationCommon):
         letter_page = LetterPage(self.driver)
         letter_page.letter_toolbar.get_prev_letter()
         subject = letter_page.letter_head.get_subject()
-        self.assertEquals('1', subject)
+        self.assertEquals('3', subject)
 
     def tearDown(self):
         NavigationCommon.clear_sent_box(self.driver)
@@ -60,14 +60,14 @@ class NavigateMultiplePreviousTest(unittest.TestCase, NavigationCommon):
     def test(self):
         sent_page = SentPage(self.driver)
         sent_page.open()
-        sent_page.wait_for_letter('3')
-        sent_page.open_letter('3')
+        sent_page.wait_for_letter('1')
+        sent_page.open_letter('1')
 
         letter_page = LetterPage(self.driver)
         letter_page.letter_toolbar.get_prev_letter()
         letter_page.letter_toolbar.get_prev_letter()
         subject = letter_page.letter_head.get_subject()
-        self.assertEquals('1', subject)
+        self.assertEquals('3', subject)
 
     def tearDown(self):
         NavigationCommon.clear_sent_box(self.driver)
@@ -100,7 +100,7 @@ class NavigateReturnTest(unittest.TestCase, NavigationCommon):
         self.driver.quit()
 
 
-class NavigateNoForwardTest(unittest.TestCase, NavigationCommon):
+class NavigateNoPrevTest(unittest.TestCase, NavigationCommon):
 
     def setUp(self):
         self.driver = NavigationCommon.get_driver()
@@ -124,4 +124,102 @@ class NavigateNoForwardTest(unittest.TestCase, NavigationCommon):
         self.driver.quit()
 
 
+class NavigateNextTest(unittest.TestCase, NavigationCommon):
 
+    def setUp(self):
+        self.driver = NavigationCommon.get_driver()
+        auth_page = AuthPage(self.driver)
+        auth_page.open()
+        auth_page.authenticate()
+        NavigationCommon.fill_sent_box(self.driver)
+
+    def test(self):
+        sent_page = SentPage(self.driver)
+        sent_page.open()
+        sent_page.wait_for_letter('2')
+        sent_page.open_letter('2')
+
+        letter_page = LetterPage(self.driver)
+        letter_page.letter_toolbar.get_next_letter()
+        subject = letter_page.letter_head.get_subject()
+        self.assertEquals('1', subject)
+
+    def tearDown(self):
+        NavigationCommon.clear_sent_box(self.driver)
+        self.driver.quit()
+
+
+class NavigateMultipleNextTest(unittest.TestCase, NavigationCommon):
+
+    def setUp(self):
+        self.driver = NavigationCommon.get_driver()
+        auth_page = AuthPage(self.driver)
+        auth_page.open()
+        auth_page.authenticate()
+        NavigationCommon.fill_sent_box(self.driver)
+
+    def test(self):
+        sent_page = SentPage(self.driver)
+        sent_page.open()
+        sent_page.wait_for_letter('3')
+        sent_page.open_letter('3')
+
+        letter_page = LetterPage(self.driver)
+        letter_page.letter_toolbar.get_next_letter()
+        letter_page.letter_toolbar.get_next_letter()
+        subject = letter_page.letter_head.get_subject()
+        self.assertEquals('1', subject)
+
+    def tearDown(self):
+        NavigationCommon.clear_sent_box(self.driver)
+        self.driver.quit()
+
+
+class NavigateReturnNextTest(unittest.TestCase, NavigationCommon):
+
+    def setUp(self):
+        self.driver = NavigationCommon.get_driver()
+        auth_page = AuthPage(self.driver)
+        auth_page.open()
+        auth_page.authenticate()
+        NavigationCommon.fill_sent_box(self.driver)
+
+    def test(self):
+        sent_page = SentPage(self.driver)
+        sent_page.open()
+        sent_page.wait_for_letter('2')
+        sent_page.open_letter('2')
+
+        letter_page = LetterPage(self.driver)
+        letter_page.letter_toolbar.get_next_letter()
+        letter_page.letter_toolbar.get_prev_letter()
+        subject = letter_page.letter_head.get_subject()
+        self.assertEquals('2', subject)
+
+    def tearDown(self):
+        NavigationCommon.clear_sent_box(self.driver)
+        self.driver.quit()
+
+
+class NavigateNoNextTest(unittest.TestCase, NavigationCommon):
+
+    def setUp(self):
+        self.driver = NavigationCommon.get_driver()
+        auth_page = AuthPage(self.driver)
+        auth_page.open()
+        auth_page.authenticate()
+        NavigationCommon.fill_sent_box(self.driver)
+
+    def test(self):
+        sent_page = SentPage(self.driver)
+        sent_page.open()
+        sent_page.wait_for_letter('1')
+        sent_page.open_letter('1')
+
+        letter_page = LetterPage(self.driver)
+        is_disabled = letter_page.letter_toolbar.next_letter_is_disabled()
+        self.assertEquals(True, is_disabled)
+
+    def tearDown(self):
+        NavigationCommon.clear_sent_box(self.driver)
+        self.driver.quit()

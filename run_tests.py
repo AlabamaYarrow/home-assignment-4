@@ -15,7 +15,12 @@ if __name__ == '__main__':
         # unittest.makeSuite(navigation_test.NavigatePreviousTest),
         # unittest.makeSuite(navigation_test.NavigateMultiplePreviousTest),
         # unittest.makeSuite(navigation_test.NavigateReturnTest),
-        # unittest.makeSuite(navigation_test.NavigateNoForwardTest),
+        # unittest.makeSuite(navigation_test.NavigateNoPrevTest),
+        #
+        # unittest.makeSuite(navigation_test.NavigateNextTest),
+        # unittest.makeSuite(navigation_test.NavigateMultipleNextTest),
+        # unittest.makeSuite(navigation_test.NavigateReturnNextTest),
+        unittest.makeSuite(navigation_test.NavigateNoNextTest),
 
     ))
     result = unittest.TextTestRunner().run(suite)
