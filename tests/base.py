@@ -102,7 +102,8 @@ class SentPage(Page):
 
     def open_letter(self, subject):
         letter = '//a[@data-subject="'+subject+'"]'
-        self.driver.find_element_by_xpath(letter).click()
+        url = self.driver.find_element_by_xpath(letter).get_attribute('href')
+        self.driver.get(url)
 
     def clear_box(self):
         CHECKBOX = '//div[@class="b-checkbox__checkmark"]'
