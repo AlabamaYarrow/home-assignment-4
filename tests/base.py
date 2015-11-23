@@ -47,7 +47,20 @@ class AuthPage(Page):
         self.form.submit()
 
 
-class InboxPage(Page):
+class ClearBoxMixin():
+    def clear_box(self, driver):
+        CHECKBOX = '//div[@class="b-checkbox__checkmark"]'
+        DELETEBTN = '//span[contains(text(), "Удалить")]'
+
+        WebDriverWait(driver, 30, 0.1).until(
+            lambda d: d.find_element_by_xpath(CHECKBOX)
+        )
+
+        driver.find_element_by_xpath(CHECKBOX).click()
+        driver.find_element_by_xpath(DELETEBTN).click()
+
+
+class InboxPage(Page, ClearBoxMixin):
     PATH = ''
 
     @property
@@ -58,14 +71,14 @@ class InboxPage(Page):
     def folders(self):
         return Folders(self.driver)
 
-    def send_letter(self, nameLetter):
+    def send_letter(self, nameLetter, email="nikuda@mail.ru"):
         BUTTONSENDFROM = '//span[contains(text(), "Написать письмо")]'
         BUTTONSEND = '//span[contains(text(), "Отправить")]'
         EMAILFIELD = '//textarea[@data-original-name="To"]'
         SUBJECTFIELD = '//input[@name="Subject"]'
         BODYFRAME = '//iframe[starts-with(@id,"compose_")]'
         BODELETTER = '//body'
-        EMAIL = "nikuda@mail.ru"
+        EMAIL = email
         SENTSTATUS = '//div[@class="message-sent__title"]'
 
         self.driver.find_element_by_xpath(BUTTONSENDFROM).click()
@@ -87,7 +100,6 @@ class InboxPage(Page):
             lambda d: d.find_element_by_xpath(SENTSTATUS)
         )
 
-
 class SentLetterPage(Page):
     PATH = ''
 
@@ -96,7 +108,7 @@ class SentLetterPage(Page):
         return SentLetterData(self.driver)
 
 
-class SentPage(Page):
+class SentPage(Page, ClearBoxMixin):
     PATH = '/messages/sent/'
 
     def wait_for_letter(self, subject):
@@ -113,17 +125,6 @@ class SentPage(Page):
         url = self.driver.find_element_by_xpath(letter).get_attribute('href')
         self.driver.get(url)
 
-    def clear_box(self):
-        CHECKBOX = '//div[@class="b-checkbox__checkmark"]'
-        DELETEBTN = '//span[contains(text(), "Удалить")]'
-
-        WebDriverWait(self.driver, 30, 0.1).until(
-            lambda d: d.find_element_by_xpath(CHECKBOX)
-        )
-
-        self.driver.find_element_by_xpath(CHECKBOX).click()
-        self.driver.find_element_by_xpath(DELETEBTN).click()
-
 
 class LetterPage(Page):
     PATH = ''
@@ -135,17 +136,6 @@ class LetterPage(Page):
     @property
     def letter_toolbar(self):
         return LetterToolbar(self.driver)       
-
-    def clear_box(self):
-        CHECKBOX = '//div[@class="b-checkbox__checkmark"]'
-        DELETEBTN = '//span[contains(text(), "Удалить")]'
-
-        WebDriverWait(self.driver, 30, 0.1).until(
-            lambda d: d.find_element_by_xpath(CHECKBOX)
-        )
-
-        self.driver.find_element_by_xpath(CHECKBOX).click()
-        self.driver.find_element_by_xpath(DELETEBTN).click()
 
 
 class AuthForm(Component):
@@ -191,7 +181,7 @@ class LetterToolbar(Component):
     NEXT = '//div[@data-name="letter_next"]'
     PREV = '//div[@data-name="letter_prev"]'
     REPLY = '//span[text() = "Ответить"]'
-    REPLY = '//span[text() = "Ответить всем"]'
+    REPLYALL = '//span[text() = "Ответить всем"]'
     ATTRLETTER = 'aria-disabled'
 
     def prev_letter_is_disabled(self):
@@ -212,7 +202,7 @@ class LetterToolbar(Component):
         return self.driver.find_element_by_xpath(self.REPLY).click()
 
     def reply_all(self):
-        return self.driver.find_element_by_xpath(self.REPLY).click()
+        return self.driver.find_element_by_xpath(self.REPLYALL).click()
 
 
 class SentLetterData(Component):

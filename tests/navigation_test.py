@@ -13,7 +13,7 @@ class NavigationCommon(object):
     def clear_sent_box(driver):
         sent_page = SentPage(driver)
         sent_page.open()
-        sent_page.clear_box()
+        sent_page.clear_box(driver)
 
     @staticmethod
     def get_driver():
