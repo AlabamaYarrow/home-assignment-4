@@ -38,6 +38,80 @@ class InboxPage(Page):
     def top_status(self):
         return TopStatus(self.driver)
 
+    @property
+    def folders(self):
+        return Folders(self.driver)
+
+    def send_letter(self, nameLetter):
+        BUTTONSENDFROM = '//span[contains(text(), "Написать письмо")]'
+        BUTTONSEND = '//span[contains(text(), "Отправить")]'
+        EMAILFIELD = '//textarea[@data-original-name="To"]'
+        SUBJECTFIELD = '//input[@name="Subject"]'
+        BODYFRAME = '//iframe[starts-with(@id,"compose_")]'
+        BODELETTER = '//body'
+        EMAIL = "nikuda@mail.ru"
+        SENTSTATUS = '//div[@class="message-sent__title"]'
+
+        self.driver.find_element_by_xpath(BUTTONSENDFROM).click()
+
+        WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_element_by_xpath(EMAILFIELD)
+        )
+
+        self.driver.find_element_by_xpath(EMAILFIELD).send_keys(EMAIL)
+        self.driver.find_element_by_xpath(SUBJECTFIELD).send_keys(nameLetter)
+
+        self.driver.switch_to.frame(self.driver.find_element_by_xpath(BODYFRAME))
+        self.driver.find_element_by_xpath(BODELETTER).send_keys(nameLetter)
+        self.driver.switch_to_default_content()
+
+        self.driver.find_element_by_xpath(BUTTONSEND).click()
+
+        WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_element_by_xpath(SENTSTATUS)
+        )
+
+class SentPage(Page):
+    PATH = '/messages/sent/'
+
+    def open_letter(self, subject):
+        LETTER = '//a[@data-subject="'+subject+'"]'
+
+        self.driver.find_element_by_xpath(LETTER).click()
+
+    def clear_box(self):
+        CHECKBOX = '//div[@class="b-checkbox__checkmark"]'
+        DELETEBTN = '//span[contains(text(), "Удалить")]'
+
+        WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_element_by_xpath(CHECKBOX)
+        )
+
+        self.driver.find_element_by_xpath(CHECKBOX).click()
+        self.driver.find_element_by_xpath(DELETEBTN).click()
+
+class LetterPage(Page):
+    PATH = ''
+
+    @property
+    def letter_head(self):
+        return LetterHead(self.driver)
+
+    @property
+    def letter_toolbar(self):
+        return LetterToolbar(self.driver)       
+
+    def clear_box(self):
+        CHECKBOX = '//div[@class="b-checkbox__checkmark"]'
+        DELETEBTN = '//span[contains(text(), "Удалить")]'
+
+        WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_element_by_xpath(CHECKBOX)
+        )
+
+        self.driver.find_element_by_xpath(CHECKBOX).click()
+        self.driver.find_element_by_xpath(DELETEBTN).click()
+
 class AuthForm(Component):
     LOGIN = '//input[@name="Login"]'
     PASSWORD = '//input[@name="Password"]'
@@ -57,3 +131,28 @@ class TopStatus(Component):
 
     def get_email(self):
         return self.driver.find_element_by_xpath(self.EMAIL).text
+
+class Folders(Component):
+    SENTFOLDER = '//i[contains(@class, "ico_folder_send")]'
+    
+    def get_sent_inbox(self):
+        self.driver.find_element_by_xpath(self.SENTFOLDER).click()
+
+class LetterHead(Component):
+    SUBJECT = '//div[@class="b-letter__head__subj__text"]'
+    
+    def get_subject(self):
+        WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_element_by_xpath(self.SUBJECT)
+        )
+        return self.driver.find_element_by_xpath(self.SUBJECT).text
+
+class LetterToolbar(Component):
+    PREV = '//i[contains(@class, "ico_toolbar_arrow_up")]'
+    PREV = '//i[contains(@class, "ico_toolbar_arrow_down")]'
+    
+    def get_prev_letter(self):
+        self.driver.find_element_by_xpath(self.PREV).click()
+
+    def get_next_letter(self):
+        self.driver.find_element_by_xpath(self.PREV).click()
