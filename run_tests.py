@@ -13,7 +13,7 @@ if __name__ == '__main__':
         # unittest.makeSuite(ReviewTest),
 
         unittest.makeSuite(navigation_test.NavigatePreviousTest),
-        # unittest.makeSuite(navigation_test.NavigateMultiplePreviousTest),
+        unittest.makeSuite(navigation_test.NavigateMultiplePreviousTest),
         # unittest.makeSuite(navigation_test.NavigateReturnTest),
         # unittest.makeSuite(navigation_test.NavigateNoPrevTest),
         #

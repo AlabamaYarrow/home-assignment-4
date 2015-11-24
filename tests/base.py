@@ -75,16 +75,21 @@ class AuthPage(Page):
 
 class ClearBoxMixin(WaitForPageLoad):
     def clear_box(self, driver):
-        TOOLBAR = '//div[contains(@style, "z-index: 100") and @class="b-sticky" and contains(@style,"position: absolute")]'
-        VISIBLETB = '//div[starts-with(@data-cache-key,"500000_undefined_")]'
-        CHECKBOX = '//div[@data-bem="checkbox"]'
-        DELETEBTN = '//span[contains(text(), "Удалить")]'
 
-        # toolbar = driver.find_element_by_xpath(TOOLBAR)
-        # visibletb = toolbar.find_element_by_xpath(VISIBLETB)
-        # print visibletb.get_attribute("innerHTML")
-        # visibletb.find_element_by_xpath(CHECKBOX).click()
-        # visibletb.find_element_by_xpath(DELETEBTN).click()
+        scriptFindToolbar = '\
+            topTollbar = $(".b-sticky").filter(function () { return $(this).css("z-index") == 100 });\
+            rightToolbar = topTollbar.find("#b-toolbar__right").children();\
+            visibleToolbar = $(rightToolbar).filter(function () { return $(this).css("display") != "none" });'
+        scriptCheckAll = scriptFindToolbar + '\
+            checkbox = visibleToolbar.find(".b-checkbox__checkmark");\
+            checkbox.click();'
+        scriptDelete = scriptFindToolbar + '\
+            deleteBtn = visibleToolbar.find("span").filter(function () { return $(this).text() == "Удалить" });\
+            deleteBtn.click();'
+
+        driver.execute_script(scriptCheckAll)
+        with WaitForPageLoad(self.driver):
+            driver.execute_script(scriptDelete)
 
 
 class InboxPage(Page, ClearBoxMixin, WaitForPageLoad):
@@ -110,6 +115,10 @@ class InboxPage(Page, ClearBoxMixin, WaitForPageLoad):
 
         with WaitForPageLoad(self.driver):
             self.driver.find_element_by_xpath(BUTTONSENDFROM).click()
+
+        WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_element_by_xpath(EMAILFIELD)
+        )
 
         self.driver.find_element_by_xpath(EMAILFIELD).send_keys(EMAIL)
         self.driver.find_element_by_xpath(SUBJECTFIELD).send_keys(nameLetter)
