@@ -90,8 +90,9 @@ class NavigateReturnTest(unittest.TestCase, NavigationCommon):
         sent_page.open_letter('3')
 
         letter_page = LetterPage(self.driver)
-        letter_page.letter_toolbar.get_prev_letter()
         letter_page.letter_toolbar.get_next_letter()
+        letter_page.letter_toolbar.get_prev_letter()
+
         subject = letter_page.letter_head.get_subject()
         self.assertEquals('3', subject)
 
@@ -187,14 +188,14 @@ class NavigateReturnNextTest(unittest.TestCase, NavigationCommon):
     def test(self):
         sent_page = SentPage(self.driver)
         sent_page.open()
-        sent_page.wait_for_letter('2')
-        sent_page.open_letter('2')
+        sent_page.wait_for_letter('1')
+        sent_page.open_letter('1')
 
         letter_page = LetterPage(self.driver)
-        letter_page.letter_toolbar.get_next_letter()
         letter_page.letter_toolbar.get_prev_letter()
+        letter_page.letter_toolbar.get_next_letter()
         subject = letter_page.letter_head.get_subject()
-        self.assertEquals('2', subject)
+        self.assertEquals('1', subject)
 
     def tearDown(self):
         NavigationCommon.clear_sent_box(self.driver)
