@@ -59,6 +59,31 @@ class WaitForPageLoad(object):
     def __exit__(self, *_):
         wait_for(self.page_has_loaded)
 
+class ToolbarJS(object):
+    ## TODO: перенести переменную scriptFindToolbar в описание класса, а в методах вызывать её
+
+    @staticmethod
+    def get_check_all_script():
+        scriptFindToolbar = '\
+            topTollbar = $(".b-sticky").filter(function () { return $(this).css("z-index") == 100 });\
+            rightToolbar = topTollbar.find("#b-toolbar__right").children();\
+            visibleToolbar = $(rightToolbar).filter(function () { return $(this).css("display") != "none" });'
+
+        return scriptFindToolbar + '\
+        checkbox = visibleToolbar.find(".b-checkbox__checkmark");\
+        checkbox.click();'
+
+    @staticmethod
+    def get_delete_script():
+        scriptFindToolbar = '\
+            topTollbar = $(".b-sticky").filter(function () { return $(this).css("z-index") == 100 });\
+            rightToolbar = topTollbar.find("#b-toolbar__right").children();\
+            visibleToolbar = $(rightToolbar).filter(function () { return $(this).css("display") != "none" });'
+
+        return scriptFindToolbar + '\
+        deleteBtn = visibleToolbar.find("span").filter(function () { return $(this).text() == "Удалить" });\
+        deleteBtn.click();'
+
 
 class AuthPage(Page):
     PATH = ''
@@ -73,23 +98,19 @@ class AuthPage(Page):
         self.form.submit()
 
 
-class ClearBoxMixin(WaitForPageLoad):
+class ClearBoxMixin(WaitForPageLoad, ToolbarJS):
+    EMPTYFOLDER = '//span[contains(text(), "У вас нет отправленных писем")]'
+
     def clear_box(self, driver):
+        try:
+            self.driver.find_element_by_xpath(self.EMPTYFOLDER)
+        except NoSuchElementException:
+            scriptCheckAll = ToolbarJS.get_check_all_script()
+            scriptDelete = ToolbarJS.get_delete_script()
 
-        scriptFindToolbar = '\
-            topTollbar = $(".b-sticky").filter(function () { return $(this).css("z-index") == 100 });\
-            rightToolbar = topTollbar.find("#b-toolbar__right").children();\
-            visibleToolbar = $(rightToolbar).filter(function () { return $(this).css("display") != "none" });'
-        scriptCheckAll = scriptFindToolbar + '\
-            checkbox = visibleToolbar.find(".b-checkbox__checkmark");\
-            checkbox.click();'
-        scriptDelete = scriptFindToolbar + '\
-            deleteBtn = visibleToolbar.find("span").filter(function () { return $(this).text() == "Удалить" });\
-            deleteBtn.click();'
-
-        driver.execute_script(scriptCheckAll)
-        with WaitForPageLoad(self.driver):
-            driver.execute_script(scriptDelete)
+            driver.execute_script(scriptCheckAll)
+            with WaitForPageLoad(self.driver):
+                driver.execute_script(scriptDelete)
 
 
 class InboxPage(Page, ClearBoxMixin, WaitForPageLoad):
@@ -199,8 +220,11 @@ class Folders(Component, WaitForPageLoad):
     SENTFOLDER = '//i[contains(@class, "ico_folder_send")]'
     
     def get_sent_inbox(self):
-        with WaitForPageLoad(self.driver):
-            self.driver.find_element_by_xpath(self.SENTFOLDER).click()
+        ICO = self.driver.find_element_by_xpath(self.SENTFOLDER)
+        classes = ICO.find_element_by_xpath("../../..").get_attribute("class")
+        if "b-nav__item_active" not in classes:
+            with WaitForPageLoad(self.driver):
+                self.driver.find_element_by_xpath(self.SENTFOLDER).click()
 
 
 class LetterHead(Component):
@@ -213,7 +237,7 @@ class LetterHead(Component):
         return self.driver.find_element_by_xpath(self.SUBJECT).text
 
 
-class LetterToolbar(Component, WaitForPageLoad):
+class LetterToolbar(Component, WaitForPageLoad, ToolbarJS):
     TOOLBAR = '//div[@data-mnemo="toolbar-letter"]'
     NEXT = '//div[@data-name="letter_next"]'
     PREV = '//div[@data-name="letter_prev"]'
@@ -259,10 +283,10 @@ class LetterToolbar(Component, WaitForPageLoad):
         with WaitForPageLoad(self.driver):
             toolbar.find_element_by_xpath(self.FORWARD).click()
 
-    # def delete(self):
-    #     toolbar = self.driver.find_element_by_xpath(self.TOOLBAR)
-    #     delete = toolbar.find_element_by_xpath(self.DELETE)
-    #     delete.click()
+    def delete(self):
+        scriptDelete = ToolbarJS.get_delete_script()
+        with WaitForPageLoad(self.driver):
+            self.driver.execute_script(scriptDelete)
 
     # def archive(self):
     #     toolbar = self.driver.find_element_by_xpath(self.TOOLBAR)
