@@ -27,15 +27,16 @@ class ReviewTest(unittest.TestCase, NavigationCommon):
         auth_page.authenticate()
 
     def test(self):
+
         inbox_page = InboxPage(self.driver)
-        inbox_page.send_letter("Message1", "nikuda@mail.ru", "null@mail.ru")
+        inbox_page.send_letter("Message1", "nikuda@mail.ru")
         inbox_page.folders.get_sent_inbox()
 
         sentPage = SentPage(self.driver)
         sentPage.open_letter("Message1")
 
         letterPage = LetterPage(self.driver)
-        letterPage.letter_toolbar.delete()
+        letterPage.letter_toolbar.archive()
 
         ###### reply/reply_all
 
@@ -49,6 +50,7 @@ class ReviewTest(unittest.TestCase, NavigationCommon):
         # print "email_copy: " + sent_letter_page.data.get_email_copy()
         # print "subject: " + sent_letter_page.data.get_subject()
         # print "body: " + sent_letter_page.data.get_body()
+        pass
 
     def tearDown(self):
         NavigationCommon.clear_sent_box(self.driver)
