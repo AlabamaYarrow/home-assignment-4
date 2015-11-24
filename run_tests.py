@@ -12,7 +12,7 @@ if __name__ == '__main__':
         # unittest.makeSuite(auth_test.AuthTest),
         # unittest.makeSuite(ReviewTest),
 
-        # unittest.makeSuite(navigation_test.NavigatePreviousTest),
+        unittest.makeSuite(navigation_test.NavigatePreviousTest),
         # unittest.makeSuite(navigation_test.NavigateMultiplePreviousTest),
         # unittest.makeSuite(navigation_test.NavigateReturnTest),
         # unittest.makeSuite(navigation_test.NavigateNoPrevTest),
@@ -22,7 +22,7 @@ if __name__ == '__main__':
         # unittest.makeSuite(navigation_test.NavigateReturnNextTest),
         # unittest.makeSuite(navigation_test.NavigateNoNextTest),
 
-        unittest.makeSuite(reply_test.ReplyTest),
+        # unittest.makeSuite(reply_test.ReplyTest),
 
     ))
     result = unittest.TextTestRunner().run(suite)

@@ -1,4 +1,5 @@
 from base import *
+import time
 
 
 class NavigationCommon(object):
@@ -11,8 +12,9 @@ class NavigationCommon(object):
 
     @staticmethod
     def clear_sent_box(driver):
+        inbox_page = InboxPage(driver)
+        inbox_page.folders.get_sent_inbox()
         sent_page = SentPage(driver)
-        sent_page.open()
         sent_page.clear_box(driver)
 
     @staticmethod
@@ -33,9 +35,10 @@ class NavigatePreviousTest(unittest.TestCase, NavigationCommon):
         NavigationCommon.fill_sent_box(self.driver)
 
     def test(self):
+        pass
+        inbox_page = InboxPage(self.driver)
+        inbox_page.folders.get_sent_inbox()
         sent_page = SentPage(self.driver)
-        sent_page.open()
-        sent_page.wait_for_letter('2')
         sent_page.open_letter('2')
 
         letter_page = LetterPage(self.driver)

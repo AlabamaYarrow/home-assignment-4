@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import os
-
 import urlparse
-
 import unittest
+import time
 
 from selenium.webdriver import DesiredCapabilities, Remote
 from selenium.webdriver.support.ui import WebDriverWait
@@ -33,6 +32,33 @@ class Component(object):
     def __init__(self, driver):
         self.driver = driver
 
+def wait_for(condition_function):
+    start_time = time.time()
+    while time.time() < start_time + 10:
+        if condition_function():
+            return True
+        else:
+            time.sleep(0.1)
+    raise Exception(
+        'Timeout waiting for {}'.format(condition_function.__name__)
+    )
+
+class WaitForPageLoad(object):
+    CHANGEBLOCK = '//div[@class="b-layout  b-layout_flex"]'
+
+    def __init__(self, driver):
+        self.driver = driver
+
+    def __enter__(self):
+        self.old_page = self.driver.find_element_by_xpath(self.CHANGEBLOCK).text
+
+    def page_has_loaded(self):
+        new_page = self.driver.find_element_by_xpath(self.CHANGEBLOCK).text
+        return new_page != self.old_page
+
+    def __exit__(self, *_):
+        wait_for(self.page_has_loaded)
+
 
 class AuthPage(Page):
     PATH = ''
@@ -47,20 +73,21 @@ class AuthPage(Page):
         self.form.submit()
 
 
-class ClearBoxMixin():
+class ClearBoxMixin(WaitForPageLoad):
     def clear_box(self, driver):
-        CHECKBOX = '//div[@class="b-checkbox__checkmark"]'
+        TOOLBAR = '//div[contains(@style, "z-index: 100") and @class="b-sticky" and contains(@style,"position: absolute")]'
+        VISIBLETB = '//div[starts-with(@data-cache-key,"500000_undefined_")]'
+        CHECKBOX = '//div[@data-bem="checkbox"]'
         DELETEBTN = '//span[contains(text(), "Удалить")]'
 
-        WebDriverWait(driver, 30, 0.1).until(
-            lambda d: d.find_element_by_xpath(CHECKBOX)
-        )
+        # toolbar = driver.find_element_by_xpath(TOOLBAR)
+        # visibletb = toolbar.find_element_by_xpath(VISIBLETB)
+        # print visibletb.get_attribute("innerHTML")
+        # visibletb.find_element_by_xpath(CHECKBOX).click()
+        # visibletb.find_element_by_xpath(DELETEBTN).click()
 
-        driver.find_element_by_xpath(CHECKBOX).click()
-        driver.find_element_by_xpath(DELETEBTN).click()
 
-
-class InboxPage(Page, ClearBoxMixin):
+class InboxPage(Page, ClearBoxMixin, WaitForPageLoad):
     PATH = ''
 
     @property
@@ -81,11 +108,8 @@ class InboxPage(Page, ClearBoxMixin):
         EMAIL = email
         SENTSTATUS = '//div[@class="message-sent__title"]'
 
-        self.driver.find_element_by_xpath(BUTTONSENDFROM).click()
-
-        WebDriverWait(self.driver, 30, 0.1).until(
-            lambda d: d.find_element_by_xpath(EMAILFIELD)
-        )
+        with WaitForPageLoad(self.driver):
+            self.driver.find_element_by_xpath(BUTTONSENDFROM).click()
 
         self.driver.find_element_by_xpath(EMAILFIELD).send_keys(EMAIL)
         self.driver.find_element_by_xpath(SUBJECTFIELD).send_keys(nameLetter)
@@ -94,11 +118,9 @@ class InboxPage(Page, ClearBoxMixin):
         self.driver.find_element_by_xpath(BODELETTER).send_keys(nameLetter)
         self.driver.switch_to_default_content()
 
-        self.driver.find_element_by_xpath(BUTTONSEND).click()
+        with WaitForPageLoad(self.driver):
+            self.driver.find_element_by_xpath(BUTTONSEND).click()
 
-        WebDriverWait(self.driver, 30, 0.1).until(
-            lambda d: d.find_element_by_xpath(SENTSTATUS)
-        )
 
 class SentLetterPage(Page):
     PATH = ''
@@ -108,8 +130,9 @@ class SentLetterPage(Page):
         return SentLetterData(self.driver)
 
 
-class SentPage(Page, ClearBoxMixin):
+class SentPage(Page, ClearBoxMixin, WaitForPageLoad):
     PATH = '/messages/sent/'
+
 
     def wait_for_letter(self, subject):
         letter = '//a[@data-subject="'+subject+'"]'
@@ -121,8 +144,9 @@ class SentPage(Page, ClearBoxMixin):
                 self.open()
 
     def open_letter(self, subject):
-        LETTER = '//a[@data-subject="'+subject+'"]'
-        self.driver.find_element_by_xpath(LETTER).click()
+        LETTER = '//a[@data-subject='+subject+']'
+        with WaitForPageLoad(self.driver):
+            self.driver.find_element_by_xpath(LETTER).click()
 
 
 class LetterPage(Page):
@@ -159,11 +183,12 @@ class TopStatus(Component):
         return self.driver.find_element_by_xpath(self.EMAIL).text
 
 
-class Folders(Component):
+class Folders(Component, WaitForPageLoad):
     SENTFOLDER = '//i[contains(@class, "ico_folder_send")]'
     
     def get_sent_inbox(self):
-        self.driver.find_element_by_xpath(self.SENTFOLDER).click()
+        with WaitForPageLoad(self.driver):
+            self.driver.find_element_by_xpath(self.SENTFOLDER).click()
 
 
 class LetterHead(Component):
@@ -176,7 +201,7 @@ class LetterHead(Component):
         return self.driver.find_element_by_xpath(self.SUBJECT).text
 
 
-class LetterToolbar(Component):
+class LetterToolbar(Component, WaitForPageLoad):
     TOOLBAR = '//div[@data-mnemo="toolbar-letter"]'
     NEXT = '//div[@data-name="letter_next"]'
     PREV = '//div[@data-name="letter_prev"]'
@@ -199,11 +224,13 @@ class LetterToolbar(Component):
 
     def get_prev_letter(self):
         toolbar = self.driver.find_element_by_xpath(self.TOOLBAR)
-        return toolbar.find_element_by_xpath(self.PREV).click()
+        with WaitForPageLoad(self.driver):
+            toolbar.find_element_by_xpath(self.PREV).click()
 
     def get_next_letter(self):
         toolbar = self.driver.find_element_by_xpath(self.TOOLBAR)
-        return toolbar.find_element_by_xpath(self.NEXT).click()
+        with WaitForPageLoad(self.driver):
+            toolbar.find_element_by_xpath(self.NEXT).click()
 
     def reply(self):
         toolbar = self.driver.find_element_by_xpath(self.TOOLBAR)
@@ -211,11 +238,13 @@ class LetterToolbar(Component):
 
     def reply_all(self):
         toolbar = self.driver.find_element_by_xpath(self.TOOLBAR)
-        toolbar.find_element_by_xpath(self.REPLYALL).click()
+        with WaitForPageLoad(self.driver):
+            toolbar.find_element_by_xpath(self.REPLYALL).click()
 
     def forward(self):
         toolbar = self.driver.find_element_by_xpath(self.TOOLBAR)
-        toolbar.find_element_by_xpath(self.FORWARD).click()
+        with WaitForPageLoad(self.driver):
+            toolbar.find_element_by_xpath(self.FORWARD).click()
 
     # def delete(self):
     #     toolbar = self.driver.find_element_by_xpath(self.TOOLBAR)
