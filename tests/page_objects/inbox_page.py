@@ -49,8 +49,8 @@ class Folders(Component, WaitForPageLoad):
     SENTFOLDER = '//i[contains(@class, "ico_folder_send")]'
 
     def get_sent_inbox(self):
-        ICO = self.driver.find_element_by_xpath(self.SENTFOLDER)
-        classes = ICO.find_element_by_xpath("../../..").get_attribute("class")
-        if "b-nav__item_active" not in classes:
-            with WaitForPageLoad(self.driver):
-                self.driver.find_element_by_xpath(self.SENTFOLDER).click()
+        # ICO = self.driver.find_element_by_xpath(self.SENTFOLDER)
+        # classes = ICO.find_element_by_xpath("../../..").get_attribute("class")
+        # if "b-nav__item_active" not in classes:
+        with WaitForPageLoad(self.driver):
+            self.driver.find_element_by_xpath(self.SENTFOLDER).click()
