@@ -10,7 +10,7 @@ from tests import auth_test, navigation_test, reply_test
 if __name__ == '__main__':
     suite = unittest.TestSuite((
         # unittest.makeSuite(auth_test.AuthTest),
-        unittest.makeSuite(ReviewTest),
+        # unittest.makeSuite(ReviewTest),
 
         # unittest.makeSuite(navigation_test.NavigatePreviousTest),
         # unittest.makeSuite(navigation_test.NavigateMultiplePreviousTest),
@@ -22,7 +22,19 @@ if __name__ == '__main__':
         # unittest.makeSuite(navigation_test.NavigateReturnNextTest),
         # unittest.makeSuite(navigation_test.NavigateNoNextTest),
 
-        # unittest.makeSuite(reply_test.ReplyTest),
+        # unittest.makeSuite(reply_test.ReplyEmailToTest),
+        # unittest.makeSuite(reply_test.ReplySubjectTest),
+        # unittest.makeSuite(reply_test.ReplyMailTextTest),
+
+        # unittest.makeSuite(reply_test.ReplyAllEmailToTest),
+        # unittest.makeSuite(reply_test.ReplyAllSubjectTest),
+        # unittest.makeSuite(reply_test.ReplyAllMailTextTest),
+
+        # unittest.makeSuite(reply_test.ForwardNoEmailToTest),
+        # unittest.makeSuite(reply_test.ForwardSubjectTest),
+        # unittest.makeSuite(reply_test.ForwardMailTextTest),
+
+
 
     ))
     result = unittest.TextTestRunner().run(suite)
