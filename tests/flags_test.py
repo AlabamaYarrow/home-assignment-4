@@ -125,7 +125,7 @@ class UnsetReadTest(unittest.TestCase, FlagsCommon):
         letter_page = LetterPage(self.driver)
         letter_page.letter_head.change_read_status()
         letter_page.letter_head.change_read_status()
-        self.assertEquals(letter_page.letter_head.is_flag_set(), True)
+        self.assertEquals(letter_page.letter_head.is_flag_set(), False)
 
     def tearDown(self):
         FlagsCommon.clear_sent_box(self.driver)
