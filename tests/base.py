@@ -81,8 +81,19 @@ class ToolbarJS(object):
             visibleToolbar = $(rightToolbar).filter(function () { return $(this).css("display") != "none" });'
 
         return scriptFindToolbar + '\
-        deleteBtn = visibleToolbar.find("span").filter(function () { return $(this).text() == "Удалить" });\
-        deleteBtn.click();'
+        btn = visibleToolbar.find("span").filter(function () { return $(this).text() == "Удалить" });\
+        btn.click();'
+
+    @staticmethod
+    def get_archive_script():
+        scriptFindToolbar = '\
+            topTollbar = $(".b-sticky").filter(function () { return $(this).css("z-index") == 100 });\
+            rightToolbar = topTollbar.find("#b-toolbar__right").children();\
+            visibleToolbar = $(rightToolbar).filter(function () { return $(this).css("display") != "none" });'
+
+        return scriptFindToolbar + '\
+        btn = visibleToolbar.find("span").filter(function () { return $(this).text() == "В архив" });\
+        btn.click();'
 
 
 class AuthPage(Page):
@@ -138,7 +149,8 @@ class InboxPage(Page, ClearBoxMixin, WaitForPageLoad):
             self.driver.find_element_by_xpath(BUTTONSENDFROM).click()
 
         WebDriverWait(self.driver, 30, 0.1).until(
-            lambda d: d.find_element_by_xpath(EMAILFIELDTO)
+            lambda d: d.find_element_by_xpath(EMAILFIELDTO) and 
+            self.driver.find_element_by_xpath(BUTTONSEND)
         )
 
         self.driver.find_element_by_xpath(EMAILFIELDTO).send_keys(email_to)
@@ -245,6 +257,7 @@ class LetterToolbar(Component, WaitForPageLoad, ToolbarJS):
     REPLYALL = '//span[text() = "Ответить всем"]'
     FORWARD = '//span[text() = "Переслать"]'
     DELETE = '//span[text() = "Удалить"]'
+    ARCHIVEDROP = '//div[@data-shortcut="e: \'archive\' "]'
     ARCHIVE = '//span[text() = "В архив"]'
     ATTRLETTER = 'aria-disabled'
 
@@ -298,9 +311,12 @@ class LetterToolbar(Component, WaitForPageLoad, ToolbarJS):
         with WaitForPageLoad(self.driver):
             self.driver.execute_script(scriptDelete)
 
-    # def archive(self):
-    #     toolbar = self.driver.find_element_by_xpath(self.TOOLBAR)
-    #     toolbar.find_element_by_xpath(self.ARCHIVE).click()
+    def archive(self):
+        scriptDelete = ToolbarJS.get_archive_script()
+        with WaitForPageLoad(self.driver):
+            self.driver.execute_script(scriptDelete)
+
+        
 
 class SentLetterData(Component):
     EMAILBLOCKTO = '//div[contains(@class,"js-row-To")]'
