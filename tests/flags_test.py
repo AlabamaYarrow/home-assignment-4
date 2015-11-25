@@ -21,7 +21,6 @@ class FlagsCommon(object):
         sent_page = SentPage(driver)
         sent_page.clear_box(driver)
 
-
         inbox_page.folders.get_recieved_inbox()
         sent_page = SentPage(driver)
         sent_page.clear_box(driver)

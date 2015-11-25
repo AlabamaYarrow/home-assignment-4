@@ -4,7 +4,7 @@ import sys
 import unittest
 
 from tests.review_test import ReviewTest
-from tests import auth_test, navigation_test, reply_test, letter_data_test, flags_test
+from tests import auth_test, navigation_test, reply_test, letter_data_test, flags_test, moving_test
 
 
 if __name__ == '__main__':
@@ -44,6 +44,8 @@ if __name__ == '__main__':
         # unittest.makeSuite(flags_test.UnsetFlagTest),
         # unittest.makeSuite(flags_test.SetReadTest),
         # unittest.makeSuite(flags_test.UnsetReadTest),
+
+        unittest.makeSuite(moving_test.MoveToTrashTest),
 
 
 
