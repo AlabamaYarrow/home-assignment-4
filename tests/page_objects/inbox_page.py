@@ -44,18 +44,39 @@ class InboxPage(Page, ClearBoxMixin, WaitForPageLoad):
         with WaitForPageLoad(self.driver):
             self.driver.find_element_by_xpath(BUTTONSEND).click()
 
+    def have_letter(self, subject):
+        LETTER = '//a[@data-subject="'+subject+'"]'  
+        try:
+            self.driver.find_element_by_xpath(LETTER)
+            return True
+        except NoSuchElementException:   
+            return False
+
+
 
 class Folders(Component, WaitForPageLoad):
     SENTFOLDER = '//i[contains(@class, "ico_folder_send")]'
     INBOXFOLDER = '//i[contains(@class, "ico_folder_inbox")]'
+    SPAMFOLDER = '//i[contains(@class, "ico_folder_spam")]'
+    ARCHIVEFOLDER = '//i[contains(@class, "ico_folder_archive")]'
+    TRASHFOLDER = '//i[contains(@class, "ico_folder_trash")]'
 
     def get_sent_inbox(self):
-        # ICO = self.driver.find_element_by_xpath(self.SENTFOLDER)
-        # classes = ICO.find_element_by_xpath("../../..").get_attribute("class")
-        # if "b-nav__item_active" not in classes:
         with WaitForPageLoad(self.driver):
             self.driver.find_element_by_xpath(self.SENTFOLDER).click()
 
     def get_recieved_inbox(self):
         with WaitForPageLoad(self.driver):
             self.driver.find_element_by_xpath(self.INBOXFOLDER).click()
+
+    def get_spam_inbox(self):
+        with WaitForPageLoad(self.driver):
+            self.driver.find_element_by_xpath(self.SPAMFOLDER).click()
+
+    def get_archive_inbox(self):
+        with WaitForPageLoad(self.driver):
+            self.driver.find_element_by_xpath(self.ARCHIVEFOLDER).click()
+
+    def get_trash_inbox(self):
+        with WaitForPageLoad(self.driver):
+            self.driver.find_element_by_xpath(self.BINFOLDER).click()
