@@ -1,4 +1,6 @@
-from base import *
+from page_objects.base import *
+from page_objects.inbox_page import InboxPage
+from page_objects.auth_page import AuthPage
 
 
 class AuthTest(unittest.TestCase):

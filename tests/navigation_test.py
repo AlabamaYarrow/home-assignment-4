@@ -1,5 +1,8 @@
-from base import *
-import time
+from page_objects.base import *
+from page_objects.auth_page import AuthPage
+from page_objects.inbox_page import InboxPage
+from page_objects.sent_page import SentPage
+from page_objects.letter_page import LetterPage
 
 
 class NavigationCommon(object):
@@ -8,7 +11,7 @@ class NavigationCommon(object):
         inbox_page = InboxPage(driver)
         inbox_page.send_letter('1')
         inbox_page.send_letter('2')
-        # inbox_page.send_letter('3')
+        inbox_page.send_letter('3')
 
     @staticmethod
     def clear_sent_box(driver):

@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
-from base import *
+from page_objects.base import *
+from page_objects.auth_page import AuthPage
+from page_objects.inbox_page import InboxPage
 
 
 class ReplyCommon(object):
     @staticmethod
     def fill_inbox(driver):
         inbox_page = InboxPage(driver)
-        inbox_page.send_letter('1', email=USER_EMAIL)
+        inbox_page.send_letter('1', email_to=USER_EMAIL)
 
     @staticmethod
     def clear_inbox(driver):
