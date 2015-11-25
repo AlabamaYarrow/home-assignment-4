@@ -4,8 +4,6 @@ from base import *
 
 
 class SentPage(Page, ClearBoxMixin, WaitForPageLoad):
-    PATH = '/messages/sent/'
-
     def wait_for_letter(self, subject):
         letter = '//a[@data-subject="'+subject+'"]'
         while True:
