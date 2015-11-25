@@ -28,6 +28,82 @@ class ReplyCommon(object):
         )
 
 
+class ReplyEmailToTest(unittest.TestCase, ReplyCommon):
+
+    def setUp(self):
+        self.driver = ReplyCommon.get_driver()
+        auth_page = AuthPage(self.driver)
+        auth_page.open()
+        auth_page.authenticate()
+        ReplyCommon.fill_inbox(self.driver)
+
+    def test(self):
+        inbox_page = InboxPage(self.driver)
+        inbox_page.folders.get_sent_inbox()
+        sent_page = SentPage(self.driver)
+        sent_page.open_letter('1')
+        letter_page = LetterPage(self.driver)
+        letter_page.letter_toolbar.reply()
+        sent_letter_page = SentLetterPage(self.driver)
+        self.assertEqual(sent_letter_page.data.get_email_to(), 'nikuda@mail.ru')
+
+    def tearDown(self):
+        ReplyCommon.clear_inbox(self.driver)
+        self.driver.quit()
+
+
+class ReplySubjectTest(unittest.TestCase, ReplyCommon):
+
+    def setUp(self):
+        self.driver = ReplyCommon.get_driver()
+        auth_page = AuthPage(self.driver)
+        auth_page.open()
+        auth_page.authenticate()
+        ReplyCommon.fill_inbox(self.driver)
+
+    def test(self):
+        inbox_page = InboxPage(self.driver)
+        inbox_page.folders.get_sent_inbox()
+        sent_page = SentPage(self.driver)
+        sent_page.open_letter('1')
+
+        letter_page = LetterPage(self.driver)
+        letter_page.letter_toolbar.reply()
+        sent_letter_page = SentLetterPage(self.driver)
+        self.assertEqual(sent_letter_page.data.get_subject(), 'Re: 1')
+
+    def tearDown(self):
+        ReplyCommon.clear_inbox(self.driver)
+        self.driver.quit()
+
+
+class ReplyMailTextTest(unittest.TestCase, ReplyCommon):
+
+    def setUp(self):
+        self.driver = ReplyCommon.get_driver()
+        auth_page = AuthPage(self.driver)
+        auth_page.open()
+        auth_page.authenticate()
+        inbox_page = InboxPage(self.driver)
+        inbox_page.send_letter('abrakadabra')
+
+    def test(self):
+        inbox_page = InboxPage(self.driver)
+        inbox_page.folders.get_sent_inbox()
+        sent_page = SentPage(self.driver)
+        sent_page.open_letter('abrakadabra')
+
+        letter_page = LetterPage(self.driver)
+        letter_page.letter_toolbar.reply()
+        sent_letter_page = SentLetterPage(self.driver)
+        body_text = sent_letter_page.data.get_body()
+        self.assertTrue('abrakadabra' in body_text)
+
+    def tearDown(self):
+        ReplyCommon.clear_inbox(self.driver)
+        self.driver.quit()
+
+
 class ReplyAllEmailToTest(unittest.TestCase, ReplyCommon):
 
     def setUp(self):
