@@ -33,14 +33,21 @@ class ReviewTest(unittest.TestCase, NavigationCommon):
     def test(self):
 
         inbox_page = InboxPage(self.driver)
-        inbox_page.send_letter("Message1", "nikuda@mail.ru")
+        # inbox_page.send_letter("Message1", "nikuda@mail.ru")
         inbox_page.folders.get_sent_inbox()
 
         sentPage = SentPage(self.driver)
         sentPage.open_letter("Message1")
 
         letterPage = LetterPage(self.driver)
-        print letterPage.letter_head.get_body()
+
+        print letterPage.letter_head.is_read_status()
+        letterPage.letter_head.change_read_status()
+        print letterPage.letter_head.is_read_status()
+        letterPage.letter_head.change_read_status()
+        print letterPage.letter_head.is_read_status()
+        letterPage.letter_head.change_read_status()
+        print letterPage.letter_head.is_read_status()
 
         ###### reply/reply_all
         # inbox_page.folders.get_recieved_inbox()
@@ -59,5 +66,5 @@ class ReviewTest(unittest.TestCase, NavigationCommon):
         pass
 
     def tearDown(self):
-        NavigationCommon.clear_sent_box(self.driver)
+        # NavigationCommon.clear_sent_box(self.driver)
         self.driver.quit()

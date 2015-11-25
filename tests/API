@@ -31,6 +31,10 @@ LetterPage.letter_head.get_email_from() -- получить почту отпр�
 LetterPage.letter_head.get_email_to()  -- получить почту получателя
 LetterPage.letter_head.get_date() -- получить дату письма
 LetterPage.letter_head.get_body() -- получить содержимое письма
+LetterPage.letter_head.change_flag() -- изменить флажок
+LetterPage.letter_head.is_flag_set() -- флажок установлен
+LetterPage.letter_head.change_read_status() -- изменить статут прочтения
+LetterPage.letter_head.is_read_status() -- письмо прочитано
 LetterPage.letter_toolbar.prev_letter_is_disabled() -- проверить можно ли перейти к предыдущему письму
 LetterPage.letter_toolbar.next_letter_is_disabled() -- проверить можно ли перейти к следующему письму
 LetterPage.letter_toolbar.get_prev_letter() -- перейти к предыдущему письму

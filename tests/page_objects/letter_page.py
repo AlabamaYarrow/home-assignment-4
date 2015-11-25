@@ -15,12 +15,16 @@ class LetterPage(Page):
         return LetterToolbar(self.driver)
 
 
-class LetterHead(Component):
+class LetterHead(Component, WaitForPageLoad):
     SUBJECT = '//div[@class="b-letter__head__subj__text"]'
     FROMMAIL = '//div[@data-mnemo="from"]'
     TOEMAIL = "//span[@class='b-letter__head__addrs__value']"
     DATE = "//div[@class='b-letter__head__date']"
     BODY = "//div[@class='js-body b-letter__body__wrap']"
+    FLAG = "//div[contains(@class,'b-letter__controls__flag')]/div"
+    READSTATUS = "//div[contains(@class,'letter__controls__status')]/div"
+    flag_set_class = "b-flag_yes"
+    unread_class = "b-letterstatus_unread"
 
     def get_subject(self):
         WebDriverWait(self.driver, 30, 0.1).until(
@@ -52,6 +56,24 @@ class LetterHead(Component):
             lambda d: d.find_element_by_xpath(self.BODY)
         )
         return self.driver.find_element_by_xpath(self.BODY).text
+
+    def change_flag(self):
+        WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_element_by_xpath(self.FLAG)
+        )
+        self.driver.find_element_by_xpath(self.FLAG).click()
+
+    def is_flag_set(self):          
+        return self.flag_set_class in self.driver.find_element_by_xpath(self.FLAG).get_attribute("class")
+
+    def change_read_status(self):
+        WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_element_by_xpath(self.READSTATUS)
+        )
+        self.driver.find_element_by_xpath(self.READSTATUS).click()
+
+    def is_read_status(self):          
+        return self.unread_class not in self.driver.find_element_by_xpath(self.READSTATUS).get_attribute("class")
 
 
 class LetterToolbar(Component, WaitForPageLoad, ToolbarJS):
