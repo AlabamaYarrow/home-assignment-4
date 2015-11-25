@@ -10,7 +10,12 @@ InboxPage
 InboxPage.top_status.get_email() -- почта аккаунта в строке статуса
 InboxPage.folders.get_sent_inbox() -- войти в отправленные _SentPage_
 InboxPage.folders.get_recieved_inbox() -- войти во входящие
+InboxPage.folders.get_spam_inbox() -- войти в спам
+InboxPage.folders.get_archive_inbox() -- войти в архив
+InboxPage.folders.get_trash_inbox() -- войти в корзину
 InboxPage.send_letter("subject_name") -- отправить письма с темой
+InboxPage.have_letter("subject_name") -- проверить письмо на странице
+
 
 __Страница отправки письма__
 SentLetterPage
