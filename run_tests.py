@@ -4,7 +4,7 @@ import sys
 import unittest
 
 from tests.review_test import ReviewTest
-from tests import auth_test, navigation_test, reply_test, letter_data_test
+from tests import auth_test, navigation_test, reply_test, letter_data_test, flags_test
 
 
 if __name__ == '__main__':
@@ -39,6 +39,12 @@ if __name__ == '__main__':
         # unittest.makeSuite(letter_data_test.LetterEmailToTest),
         # unittest.makeSuite(letter_data_test.LetterDatetimeExistsTest),
         # unittest.makeSuite(letter_data_test.LetterBodyExistsTest),
+
+        # unittest.makeSuite(flags_test.SetFlagTest),
+        # unittest.makeSuite(flags_test.UnsetFlagTest),
+        # unittest.makeSuite(flags_test.SetReadTest),
+        # unittest.makeSuite(flags_test.UnsetReadTest),
+
 
 
     ))
