@@ -1,4 +1,5 @@
 from base import *
+import time
 
 
 class NavigationCommon(object):
@@ -7,12 +8,13 @@ class NavigationCommon(object):
         inbox_page = InboxPage(driver)
         inbox_page.send_letter('1')
         inbox_page.send_letter('2')
-        inbox_page.send_letter('3')
+        # inbox_page.send_letter('3')
 
     @staticmethod
     def clear_sent_box(driver):
+        inbox_page = InboxPage(driver)
+        inbox_page.folders.get_sent_inbox()
         sent_page = SentPage(driver)
-        sent_page.open()
         sent_page.clear_box(driver)
 
     @staticmethod
@@ -33,15 +35,15 @@ class NavigatePreviousTest(unittest.TestCase, NavigationCommon):
         NavigationCommon.fill_sent_box(self.driver)
 
     def test(self):
+        inbox_page = InboxPage(self.driver)
+        inbox_page.folders.get_sent_inbox()
         sent_page = SentPage(self.driver)
-        sent_page.open()
-        sent_page.wait_for_letter('2')
         sent_page.open_letter('2')
 
         letter_page = LetterPage(self.driver)
         letter_page.letter_toolbar.get_prev_letter()
         subject = letter_page.letter_head.get_subject()
-        self.assertEquals('3', subject)
+        self.assertEquals(subject, '3')
 
     def tearDown(self):
         NavigationCommon.clear_sent_box(self.driver)
@@ -58,16 +60,16 @@ class NavigateMultiplePreviousTest(unittest.TestCase, NavigationCommon):
         NavigationCommon.fill_sent_box(self.driver)
 
     def test(self):
+        inbox_page = InboxPage(self.driver)
+        inbox_page.folders.get_sent_inbox()
         sent_page = SentPage(self.driver)
-        sent_page.open()
-        sent_page.wait_for_letter('1')
         sent_page.open_letter('1')
 
         letter_page = LetterPage(self.driver)
         letter_page.letter_toolbar.get_prev_letter()
         letter_page.letter_toolbar.get_prev_letter()
         subject = letter_page.letter_head.get_subject()
-        self.assertEquals('3', subject)
+        self.assertEquals(subject, '3')
 
     def tearDown(self):
         NavigationCommon.clear_sent_box(self.driver)

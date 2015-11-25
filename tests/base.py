@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import os
-
 import urlparse
-
 import unittest
+import time
 
 from selenium.webdriver import DesiredCapabilities, Remote
 from selenium.webdriver.support.ui import WebDriverWait
@@ -33,6 +32,58 @@ class Component(object):
     def __init__(self, driver):
         self.driver = driver
 
+def wait_for(condition_function):
+    start_time = time.time()
+    while time.time() < start_time + 10:
+        if condition_function():
+            return True
+        else:
+            time.sleep(0.1)
+    raise Exception(
+        'Timeout waiting for {}'.format(condition_function.__name__)
+    )
+
+class WaitForPageLoad(object):
+    CHANGEBLOCK = '//div[@class="b-layout  b-layout_flex"]'
+
+    def __init__(self, driver):
+        self.driver = driver
+
+    def __enter__(self):
+        self.old_page = self.driver.find_element_by_xpath(self.CHANGEBLOCK).text
+
+    def page_has_loaded(self):
+        new_page = self.driver.find_element_by_xpath(self.CHANGEBLOCK).text
+        return new_page != self.old_page
+
+    def __exit__(self, *_):
+        wait_for(self.page_has_loaded)
+
+class ToolbarJS(object):
+    ## TODO: перенести переменную scriptFindToolbar в описание класса, а в методах вызывать её
+
+    @staticmethod
+    def get_check_all_script():
+        scriptFindToolbar = '\
+            topTollbar = $(".b-sticky").filter(function () { return $(this).css("z-index") == 100 });\
+            rightToolbar = topTollbar.find("#b-toolbar__right").children();\
+            visibleToolbar = $(rightToolbar).filter(function () { return $(this).css("display") != "none" });'
+
+        return scriptFindToolbar + '\
+        checkbox = visibleToolbar.find(".b-checkbox__checkmark");\
+        checkbox.click();'
+
+    @staticmethod
+    def get_delete_script():
+        scriptFindToolbar = '\
+            topTollbar = $(".b-sticky").filter(function () { return $(this).css("z-index") == 100 });\
+            rightToolbar = topTollbar.find("#b-toolbar__right").children();\
+            visibleToolbar = $(rightToolbar).filter(function () { return $(this).css("display") != "none" });'
+
+        return scriptFindToolbar + '\
+        deleteBtn = visibleToolbar.find("span").filter(function () { return $(this).text() == "Удалить" });\
+        deleteBtn.click();'
+
 
 class AuthPage(Page):
     PATH = ''
@@ -47,20 +98,22 @@ class AuthPage(Page):
         self.form.submit()
 
 
-class ClearBoxMixin():
+class ClearBoxMixin(WaitForPageLoad, ToolbarJS):
+    EMPTYFOLDER = '//span[contains(text(), "У вас нет отправленных писем")]'
+
     def clear_box(self, driver):
-        CHECKBOX = '//div[@class="b-checkbox__checkmark"]'
-        DELETEBTN = '//span[contains(text(), "Удалить")]'
+        try:
+            self.driver.find_element_by_xpath(self.EMPTYFOLDER)
+        except NoSuchElementException:
+            scriptCheckAll = ToolbarJS.get_check_all_script()
+            scriptDelete = ToolbarJS.get_delete_script()
 
-        WebDriverWait(driver, 30, 0.1).until(
-            lambda d: d.find_element_by_xpath(CHECKBOX)
-        )
-
-        driver.find_element_by_xpath(CHECKBOX).click()
-        driver.find_element_by_xpath(DELETEBTN).click()
+            driver.execute_script(scriptCheckAll)
+            with WaitForPageLoad(self.driver):
+                driver.execute_script(scriptDelete)
 
 
-class InboxPage(Page, ClearBoxMixin):
+class InboxPage(Page, ClearBoxMixin, WaitForPageLoad):
     PATH = ''
 
     @property
@@ -71,34 +124,35 @@ class InboxPage(Page, ClearBoxMixin):
     def folders(self):
         return Folders(self.driver)
 
-    def send_letter(self, nameLetter, email="nikuda@mail.ru"):
+    def send_letter(self, nameLetter, email_to="nikuda@mail.ru", email_copy=""):
         BUTTONSENDFROM = '//span[contains(text(), "Написать письмо")]'
         BUTTONSEND = '//span[contains(text(), "Отправить")]'
-        EMAILFIELD = '//textarea[@data-original-name="To"]'
+        EMAILFIELDTO = '//textarea[@data-original-name="To"]'
+        EMAILFIELDCOPY = '//textarea[@data-original-name="CC"]'
         SUBJECTFIELD = '//input[@name="Subject"]'
         BODYFRAME = '//iframe[starts-with(@id,"compose_")]'
         BODELETTER = '//body'
-        EMAIL = email
         SENTSTATUS = '//div[@class="message-sent__title"]'
 
-        self.driver.find_element_by_xpath(BUTTONSENDFROM).click()
+        with WaitForPageLoad(self.driver):
+            self.driver.find_element_by_xpath(BUTTONSENDFROM).click()
 
         WebDriverWait(self.driver, 30, 0.1).until(
-            lambda d: d.find_element_by_xpath(EMAILFIELD)
+            lambda d: d.find_element_by_xpath(EMAILFIELDTO)
         )
 
-        self.driver.find_element_by_xpath(EMAILFIELD).send_keys(EMAIL)
+        self.driver.find_element_by_xpath(EMAILFIELDTO).send_keys(email_to)
+        if email_copy != "":
+            self.driver.find_element_by_xpath(EMAILFIELDCOPY).send_keys(email_copy)
         self.driver.find_element_by_xpath(SUBJECTFIELD).send_keys(nameLetter)
 
         self.driver.switch_to.frame(self.driver.find_element_by_xpath(BODYFRAME))
         self.driver.find_element_by_xpath(BODELETTER).send_keys(nameLetter)
         self.driver.switch_to_default_content()
 
-        self.driver.find_element_by_xpath(BUTTONSEND).click()
+        with WaitForPageLoad(self.driver):
+            self.driver.find_element_by_xpath(BUTTONSEND).click()
 
-        WebDriverWait(self.driver, 30, 0.1).until(
-            lambda d: d.find_element_by_xpath(SENTSTATUS)
-        )
 
 class SentLetterPage(Page):
     PATH = ''
@@ -108,8 +162,9 @@ class SentLetterPage(Page):
         return SentLetterData(self.driver)
 
 
-class SentPage(Page, ClearBoxMixin):
+class SentPage(Page, ClearBoxMixin, WaitForPageLoad):
     PATH = '/messages/sent/'
+
 
     def wait_for_letter(self, subject):
         letter = '//a[@data-subject="'+subject+'"]'
@@ -122,11 +177,9 @@ class SentPage(Page, ClearBoxMixin):
 
     def open_letter(self, subject):
         LETTER = '//a[@data-subject="'+subject+'"]'
-        self.driver.find_element_by_xpath(LETTER).click()
-        WebDriverWait(self.driver, 5, 0.1).until(
-            lambda d:
-                d.find_element_by_xpath('//div[@data-mnemo="toolbar-letter"]')
-        )
+        with WaitForPageLoad(self.driver):
+            self.driver.find_element_by_xpath(LETTER).click()
+
 
 
 class LetterPage(Page):
@@ -163,11 +216,15 @@ class TopStatus(Component):
         return self.driver.find_element_by_xpath(self.EMAIL).text
 
 
-class Folders(Component):
+class Folders(Component, WaitForPageLoad):
     SENTFOLDER = '//i[contains(@class, "ico_folder_send")]'
     
     def get_sent_inbox(self):
-        self.driver.find_element_by_xpath(self.SENTFOLDER).click()
+        ICO = self.driver.find_element_by_xpath(self.SENTFOLDER)
+        classes = ICO.find_element_by_xpath("../../..").get_attribute("class")
+        if "b-nav__item_active" not in classes:
+            with WaitForPageLoad(self.driver):
+                self.driver.find_element_by_xpath(self.SENTFOLDER).click()
 
 
 class LetterHead(Component):
@@ -180,7 +237,7 @@ class LetterHead(Component):
         return self.driver.find_element_by_xpath(self.SUBJECT).text
 
 
-class LetterToolbar(Component):
+class LetterToolbar(Component, WaitForPageLoad, ToolbarJS):
     TOOLBAR = '//div[@data-mnemo="toolbar-letter"]'
     NEXT = '//div[@data-name="letter_next"]'
     PREV = '//div[@data-name="letter_prev"]'
@@ -223,20 +280,23 @@ class LetterToolbar(Component):
 
     def reply(self):
         toolbar = self.driver.find_element_by_xpath(self.TOOLBAR)
-        toolbar.find_element_by_xpath(self.REPLY).click()
+        with WaitForPageLoad(self.driver):
+            toolbar.find_element_by_xpath(self.REPLY).click()
 
     def reply_all(self):
         toolbar = self.driver.find_element_by_xpath(self.TOOLBAR)
-        toolbar.find_element_by_xpath(self.REPLYALL).click()
+        with WaitForPageLoad(self.driver):
+            toolbar.find_element_by_xpath(self.REPLYALL).click()
 
     def forward(self):
         toolbar = self.driver.find_element_by_xpath(self.TOOLBAR)
-        toolbar.find_element_by_xpath(self.FORWARD).click()
+        with WaitForPageLoad(self.driver):
+            toolbar.find_element_by_xpath(self.FORWARD).click()
 
-    # def delete(self):
-    #     toolbar = self.driver.find_element_by_xpath(self.TOOLBAR)
-    #     delete = toolbar.find_element_by_xpath(self.DELETE)
-    #     delete.click()
+    def delete(self):
+        scriptDelete = ToolbarJS.get_delete_script()
+        with WaitForPageLoad(self.driver):
+            self.driver.execute_script(scriptDelete)
 
     # def archive(self):
     #     toolbar = self.driver.find_element_by_xpath(self.TOOLBAR)
@@ -245,22 +305,24 @@ class LetterToolbar(Component):
 class SentLetterData(Component):
     EMAILBLOCKTO = '//div[contains(@class,"js-row-To")]'
     EMAILBLOCKCOPY = '//div[contains(@class,"js-row-CC")]'
-    EMAILFIELD = '//div[contains(@class,"compose__header__field__box")]'
+    EMAILFIELD = 'compose__header__field__box'
     SUBJECTFIELD = '//input[@name="Subject"]'
     BODYFRAME = '//iframe[starts-with(@id,"compose_")]'
     BODELETTER = '//body'
 
     def get_email_to(self):
-        emailBlock = self.driver.find_element_by_xpath(self.EMAILBLOCKTO)
-        return emailBlock.find_element_by_xpath(self.EMAILFIELD).text
+        emailToBlock = self.driver.find_element_by_xpath(self.EMAILBLOCKTO)
+        return emailToBlock.find_element_by_class_name(self.EMAILFIELD).text
 
     def get_email_copy(self):
-        emailBlock = self.driver.find_element_by_xpath(self.EMAILBLOCKCOPY)
-        return emailBlock.find_element_by_xpath(self.EMAILFIELD).text
+        emailCopyBlock = self.driver.find_element_by_xpath(self.EMAILBLOCKCOPY)
+        return emailCopyBlock.find_element_by_class_name(self.EMAILFIELD).text
 
     def get_subject(self):
         return self.driver.find_element_by_xpath(self.SUBJECTFIELD).get_attribute("value")
 
     def get_body(self):
         self.driver.switch_to.frame(self.driver.find_element_by_xpath(self.BODYFRAME))
-        return self.driver.find_element_by_xpath(self.BODELETTER).text
+        body = self.driver.find_element_by_xpath(self.BODELETTER).text
+        self.driver.switch_to_default_content()
+        return body
