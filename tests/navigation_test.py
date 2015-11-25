@@ -89,8 +89,9 @@ class NavigateReturnTest(unittest.TestCase, NavigationCommon):
         NavigationCommon.fill_sent_box(self.driver)
 
     def test(self):
+        inbox_page = InboxPage(self.driver)
+        inbox_page.folders.get_sent_inbox()
         sent_page = SentPage(self.driver)
-        sent_page.open()
         sent_page.wait_for_letter('3')
         sent_page.open_letter('3')
 
@@ -116,8 +117,9 @@ class NavigateNoPrevTest(unittest.TestCase, NavigationCommon):
         NavigationCommon.fill_sent_box(self.driver)
 
     def test(self):
+        inbox_page = InboxPage(self.driver)
+        inbox_page.folders.get_sent_inbox()
         sent_page = SentPage(self.driver)
-        sent_page.open()
         sent_page.wait_for_letter('3')
         sent_page.open_letter('3')
 
@@ -140,8 +142,9 @@ class NavigateNextTest(unittest.TestCase, NavigationCommon):
         NavigationCommon.fill_sent_box(self.driver)
 
     def test(self):
+        inbox_page = InboxPage(self.driver)
+        inbox_page.folders.get_sent_inbox()
         sent_page = SentPage(self.driver)
-        sent_page.open()
         sent_page.wait_for_letter('2')
         sent_page.open_letter('2')
 
@@ -165,8 +168,9 @@ class NavigateMultipleNextTest(unittest.TestCase, NavigationCommon):
         NavigationCommon.fill_sent_box(self.driver)
 
     def test(self):
+        inbox_page = InboxPage(self.driver)
+        inbox_page.folders.get_sent_inbox()
         sent_page = SentPage(self.driver)
-        sent_page.open()
         sent_page.wait_for_letter('3')
         sent_page.open_letter('3')
 
@@ -191,8 +195,9 @@ class NavigateReturnNextTest(unittest.TestCase, NavigationCommon):
         NavigationCommon.fill_sent_box(self.driver)
 
     def test(self):
+        inbox_page = InboxPage(self.driver)
+        inbox_page.folders.get_sent_inbox()
         sent_page = SentPage(self.driver)
-        sent_page.open()
         sent_page.wait_for_letter('1')
         sent_page.open_letter('1')
 
@@ -217,8 +222,9 @@ class NavigateNoNextTest(unittest.TestCase, NavigationCommon):
         NavigationCommon.fill_sent_box(self.driver)
 
     def test(self):
+        inbox_page = InboxPage(self.driver)
+        inbox_page.folders.get_sent_inbox()
         sent_page = SentPage(self.driver)
-        sent_page.open()
         sent_page.wait_for_letter('1')
         sent_page.open_letter('1')
 
