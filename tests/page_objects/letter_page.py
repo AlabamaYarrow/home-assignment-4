@@ -17,12 +17,41 @@ class LetterPage(Page):
 
 class LetterHead(Component):
     SUBJECT = '//div[@class="b-letter__head__subj__text"]'
+    FROMMAIL = '//div[@data-mnemo="from"]'
+    TOEMAIL = "//span[@class='b-letter__head__addrs__value']"
+    DATE = "//div[@class='b-letter__head__date']"
+    BODY = "//div[@class='js-body b-letter__body__wrap']"
 
     def get_subject(self):
         WebDriverWait(self.driver, 30, 0.1).until(
             lambda d: d.find_element_by_xpath(self.SUBJECT)
         )
         return self.driver.find_element_by_xpath(self.SUBJECT).text
+
+    def get_email_from(self):
+        WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_element_by_xpath(self.FROMMAIL)
+        )
+        data = self.driver.find_element_by_xpath(self.FROMMAIL).text
+        return data[data.index('<')+1:-1]
+
+    def get_email_to(self):
+        WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_element_by_xpath(self.TOEMAIL)
+        )
+        return self.driver.find_element_by_xpath(self.TOEMAIL).text
+
+    def get_date(self):
+        WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_element_by_xpath(self.DATE)
+        )
+        return self.driver.find_element_by_xpath(self.DATE).text
+
+    def get_body(self):
+        WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_element_by_xpath(self.BODY)
+        )
+        return self.driver.find_element_by_xpath(self.BODY).text
 
 
 class LetterToolbar(Component, WaitForPageLoad, ToolbarJS):

@@ -40,11 +40,11 @@ class ReviewTest(unittest.TestCase, NavigationCommon):
         sentPage.open_letter("Message1")
 
         letterPage = LetterPage(self.driver)
-        letterPage.letter_toolbar.spam()
+        print letterPage.letter_head.get_body()
 
         ###### reply/reply_all
-        inbox_page.folders.get_recieved_inbox()
-        time.sleep(3)
+        # inbox_page.folders.get_recieved_inbox()
+        # time.sleep(3)
 
         # letterPage.letter_toolbar.reply()
         # letterPage.letter_toolbar.reply_all()

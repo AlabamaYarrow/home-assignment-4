@@ -9,6 +9,7 @@ __Страница почтового ящика__
 InboxPage
 InboxPage.top_status.get_email() -- почта аккаунта в строке статуса
 InboxPage.folders.get_sent_inbox() -- войти в отправленные _SentPage_
+InboxPage.folders.get_recieved_inbox() -- войти во входящие
 InboxPage.send_letter("subject_name") -- отправить письма с темой
 
 __Страница отправки письма__
@@ -26,6 +27,10 @@ SentPage.open_letter("subject_name") -- открыть письмо с темо�
 __Страница просмотра письма__
 LetterPage
 LetterPage.letter_head.get_subject() -- получить тему письма
+LetterPage.letter_head.get_email_from() -- получить почту отправителя
+LetterPage.letter_head.get_email_to()  -- получить почту получателя
+LetterPage.letter_head.get_date() -- получить дату письма
+LetterPage.letter_head.get_body() -- получить содержимое письма
 LetterPage.letter_toolbar.prev_letter_is_disabled() -- проверить можно ли перейти к предыдущему письму
 LetterPage.letter_toolbar.next_letter_is_disabled() -- проверить можно ли перейти к следующему письму
 LetterPage.letter_toolbar.get_prev_letter() -- перейти к предыдущему письму
@@ -33,5 +38,6 @@ LetterPage.letter_toolbar.get_next_letter() -- перейти к следующ�
 LetterPage.letter_toolbar.reply() -- ответить
 LetterPage.letter_toolbar.reply_all() -- ответить всем
 LetterPage.letter_toolbar.forward() -- переслать
--- LetterPage.letter_toolbar.delete() -- удалить письмо
--- LetterPage.letter_toolbar.archive() -- в архив
+LetterPage.letter_toolbar.delete() -- удалить письмо
+LetterPage.letter_toolbar.archive() -- в архив
+LetterPage.letter_toolbar.spam() -- в спам
