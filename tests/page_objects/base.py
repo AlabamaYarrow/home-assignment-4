@@ -97,6 +97,21 @@ class ToolbarJS(object):
         btn = visibleToolbar.find("span").filter(function () { return $(this).text() == "В архив" });\
         btn.click();'
 
+    @staticmethod
+    def get_spam_script():
+        scriptFindToolbar = '\
+            topTollbar = $(".b-sticky").filter(function () { return $(this).css("z-index") == 100 });\
+            rightToolbar = topTollbar.find("#b-toolbar__right").children();\
+            visibleToolbar = $(rightToolbar).filter(function () { return $(this).css("display") != "none" });'
+
+        return scriptFindToolbar + '\
+        btn = visibleToolbar.find("span").filter(function () { return $(this).text() == "Спам" });\
+        btn.click();'
+
+    @staticmethod
+    def get_spam_confirm_script():
+        return '$(".confirm-cancel").filter(function () { return $(this).text() == "Да" }).click();'
+
 
 class TopStatus(Component):
     EMAIL = '//i[@id="PH_user-email"]'

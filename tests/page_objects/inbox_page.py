@@ -47,6 +47,7 @@ class InboxPage(Page, ClearBoxMixin, WaitForPageLoad):
 
 class Folders(Component, WaitForPageLoad):
     SENTFOLDER = '//i[contains(@class, "ico_folder_send")]'
+    INBOXFOLDER = '//i[contains(@class, "ico_folder_inbox")]'
 
     def get_sent_inbox(self):
         # ICO = self.driver.find_element_by_xpath(self.SENTFOLDER)
@@ -54,3 +55,7 @@ class Folders(Component, WaitForPageLoad):
         # if "b-nav__item_active" not in classes:
         with WaitForPageLoad(self.driver):
             self.driver.find_element_by_xpath(self.SENTFOLDER).click()
+
+    def get_recieved_inbox(self):
+        with WaitForPageLoad(self.driver):
+            self.driver.find_element_by_xpath(self.INBOXFOLDER).click()

@@ -35,6 +35,7 @@ class LetterToolbar(Component, WaitForPageLoad, ToolbarJS):
     DELETE = '//span[text() = "Удалить"]'
     ARCHIVEDROP = '//div[@data-shortcut="e: \'archive\' "]'
     ARCHIVE = '//span[text() = "В архив"]'
+    CONFIRMSPAM = '//div[@class = "is-confirmSpam_in"]'
     ATTRLETTER = 'aria-disabled'
 
     def prev_letter_is_disabled(self):
@@ -83,11 +84,24 @@ class LetterToolbar(Component, WaitForPageLoad, ToolbarJS):
             toolbar.find_element_by_xpath(self.FORWARD).click()
 
     def delete(self):
-        scriptDelete = ToolbarJS.get_delete_script()
+        script = ToolbarJS.get_delete_script()
         with WaitForPageLoad(self.driver):
-            self.driver.execute_script(scriptDelete)
+            self.driver.execute_script(script)
 
     def archive(self):
-        scriptDelete = ToolbarJS.get_archive_script()
+        script = ToolbarJS.get_archive_script()
         with WaitForPageLoad(self.driver):
-            self.driver.execute_script(scriptDelete)
+            self.driver.execute_script(script)
+
+    def spam(self):
+        scriptBeforePopup = ToolbarJS.get_spam_script()
+        scriptAfterPopup  = ToolbarJS.get_spam_confirm_script()
+
+        self.driver.execute_script(scriptBeforePopup)
+
+        WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_element_by_xpath(self.CONFIRMSPAM)
+        )
+
+        self.driver.execute_script(scriptAfterPopup)
+
