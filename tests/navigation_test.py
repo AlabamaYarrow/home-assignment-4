@@ -47,7 +47,7 @@ class NavigatePreviousTest(unittest.TestCase, NavigationCommon):
         letter_page.letter_toolbar.get_prev_letter()
         subject = letter_page.letter_head.get_subject()
         NavigationCommon.clear_sent_box(self.driver)
-        self.assertEquals(subject, '1')
+        self.assertEquals(subject, '3')
 
     def tearDown(self):
         self.driver.quit()
@@ -92,7 +92,6 @@ class NavigateReturnTest(unittest.TestCase, NavigationCommon):
         inbox_page = InboxPage(self.driver)
         inbox_page.folders.get_sent_inbox()
         sent_page = SentPage(self.driver)
-        sent_page.wait_for_letter('3')
         sent_page.open_letter('3')
 
         letter_page = LetterPage(self.driver)
@@ -120,7 +119,6 @@ class NavigateNoPrevTest(unittest.TestCase, NavigationCommon):
         inbox_page = InboxPage(self.driver)
         inbox_page.folders.get_sent_inbox()
         sent_page = SentPage(self.driver)
-        sent_page.wait_for_letter('3')
         sent_page.open_letter('3')
 
         letter_page = LetterPage(self.driver)
@@ -145,7 +143,6 @@ class NavigateNextTest(unittest.TestCase, NavigationCommon):
         inbox_page = InboxPage(self.driver)
         inbox_page.folders.get_sent_inbox()
         sent_page = SentPage(self.driver)
-        sent_page.wait_for_letter('2')
         sent_page.open_letter('2')
 
         letter_page = LetterPage(self.driver)
@@ -171,7 +168,6 @@ class NavigateMultipleNextTest(unittest.TestCase, NavigationCommon):
         inbox_page = InboxPage(self.driver)
         inbox_page.folders.get_sent_inbox()
         sent_page = SentPage(self.driver)
-        sent_page.wait_for_letter('3')
         sent_page.open_letter('3')
 
         letter_page = LetterPage(self.driver)
@@ -198,7 +194,6 @@ class NavigateReturnNextTest(unittest.TestCase, NavigationCommon):
         inbox_page = InboxPage(self.driver)
         inbox_page.folders.get_sent_inbox()
         sent_page = SentPage(self.driver)
-        sent_page.wait_for_letter('1')
         sent_page.open_letter('1')
 
         letter_page = LetterPage(self.driver)
@@ -225,7 +220,6 @@ class NavigateNoNextTest(unittest.TestCase, NavigationCommon):
         inbox_page = InboxPage(self.driver)
         inbox_page.folders.get_sent_inbox()
         sent_page = SentPage(self.driver)
-        sent_page.wait_for_letter('1')
         sent_page.open_letter('1')
 
         letter_page = LetterPage(self.driver)
