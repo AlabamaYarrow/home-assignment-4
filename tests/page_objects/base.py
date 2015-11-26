@@ -38,8 +38,6 @@ def wait_for(condition_function):
     while time.time() < start_time + 10:
         if condition_function():
             return True
-        else:
-            time.sleep(0.1)
     raise Exception(
         'Timeout waiting for {}'.format(condition_function.__name__)
     )
@@ -121,12 +119,17 @@ class TopStatus(Component):
 
 
 class ClearBoxMixin(WaitForPageLoad, ToolbarJS):
-    EMPTYFOLDER = '//span[contains(text(), "У вас нет отправленных писем")]'
+    EMPTYFOLDER = '//span[@class="b-datalist__empty__text"]/../../../..'
 
     def clear_box(self, driver):
-        try:
-            self.driver.find_element_by_xpath(self.EMPTYFOLDER)
-        except NoSuchElementException:
+        empty_msg = self.driver.find_elements_by_xpath(self.EMPTYFOLDER)
+        flagEmpty = True
+
+        for item in empty_msg:
+            if "display: none" in item.get_attribute("style"):
+                flagEmpty = False
+
+        if not empty_msg or not flagEmpty and empty_msg:
             scriptCheckAll = ToolbarJS.get_check_all_script()
             scriptDelete = ToolbarJS.get_delete_script()
 
