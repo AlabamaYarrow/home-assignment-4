@@ -15,6 +15,7 @@ class InboxPage(Page, ClearBoxMixin, WaitForPageLoad):
         return Folders(self.driver)
 
     def send_letter(self, nameLetter, email_to="nikuda@mail.ru", email_copy=""):
+        SENTFORM = '//div[@id="b-compose"]'
         BUTTONSENDFROM = '//span[contains(text(), "Написать письмо")]'
         BUTTONSEND = '//span[contains(text(), "Отправить")]'
         EMAILFIELDTO = '//textarea[@data-original-name="To"]'
@@ -28,8 +29,8 @@ class InboxPage(Page, ClearBoxMixin, WaitForPageLoad):
             self.driver.find_element_by_xpath(BUTTONSENDFROM).click()
 
         WebDriverWait(self.driver, 30, 0.1).until(
-            lambda d: d.find_element_by_xpath(EMAILFIELDTO) and
-            self.driver.find_element_by_xpath(BUTTONSEND)
+            lambda d: d.find_element_by_xpath(SENTFORM)
+                and d.find_element_by_xpath(SENTFORM).get_attribute("style") != "display: none;"
         )
 
         self.driver.find_element_by_xpath(EMAILFIELDTO).send_keys(email_to)
@@ -62,6 +63,9 @@ class Folders(Component, WaitForPageLoad):
     TRASHFOLDER = '//i[contains(@class, "ico_folder_trash")]'
 
     def get_sent_inbox(self):
+        WebDriverWait(self.driver, 10, 0.1).until(
+            lambda d: self.driver.find_element_by_xpath(self.SENTFOLDER)
+        )
         with WaitForPageLoad(self.driver):
             self.driver.find_element_by_xpath(self.SENTFOLDER).click()
 

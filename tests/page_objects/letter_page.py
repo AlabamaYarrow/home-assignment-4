@@ -79,6 +79,7 @@ class LetterHead(Component, WaitForPageLoad):
 class LetterToolbar(Component, WaitForPageLoad, ToolbarJS):
     TOOLBAR = '//div[@data-mnemo="toolbar-letter"]'
     NEXT = '//div[@data-name="letter_next"]'
+    TOOLBARPREV = '../../../../../../../../../..'
     PREV = '//div[@data-name="letter_prev"]'
     REPLY = '//span[text() = "Ответить"]'
     REPLYALL = '//span[text() = "Ответить всем"]'
@@ -101,23 +102,33 @@ class LetterToolbar(Component, WaitForPageLoad, ToolbarJS):
 
     def get_prev_letter(self):
         toolbar = self.driver.find_element_by_xpath(self.TOOLBAR)
-        subject = self.driver.find_element_by_xpath(LetterHead.SUBJECT)
-        current_subject_text = subject.text
-        toolbar.find_element_by_xpath(self.PREV).click()
+
         WebDriverWait(self.driver, 10, 0.1).until(
-            lambda d:
-                (d.find_element_by_xpath(LetterHead.SUBJECT).text != current_subject_text)
+            lambda d: d.find_elements_by_xpath(self.PREV)
         )
+
+        prevBTNs = toolbar.find_elements_by_xpath(self.PREV)
+        for btn in prevBTNs:
+            if "visibility: hidden" not in btn.find_element_by_xpath(self.TOOLBARPREV).get_attribute("style"):
+                with WaitForPageLoad(self.driver):
+                    btn.click()
+                print "CLICK - OK"
+                break
+        
 
     def get_next_letter(self):
         toolbar = self.driver.find_element_by_xpath(self.TOOLBAR)
         subject = self.driver.find_element_by_xpath(LetterHead.SUBJECT)
         current_subject_text = subject.text
-        toolbar.find_element_by_xpath(self.NEXT).click()
-        WebDriverWait(self.driver, 10, 0.1).until(
-            lambda d:
-                d.find_element_by_xpath(LetterHead.SUBJECT).text != current_subject_text
-        )
+        with WaitForPageLoad(self.driver):
+            toolbar.find_element_by_xpath(self.NEXT).click()
+
+        # WebDriverWait(self.driver, 10, 0.1).until(
+        #     lambda d: 
+        #         print "new >>> " + d.find_element_by_xpath(LetterHead.SUBJECT).text
+        #         print "old >>> " + current_subject_text
+        #         d.find_element_by_xpath(LetterHead.SUBJECT).text != current_subject_text
+        # )
 
     def reply(self):
         toolbar = self.driver.find_element_by_xpath(self.TOOLBAR)
