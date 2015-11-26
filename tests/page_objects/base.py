@@ -119,20 +119,15 @@ class TopStatus(Component):
 
 
 class ClearBoxMixin(WaitForPageLoad, ToolbarJS):
-    EMPTYFOLDER = '//span[@class="b-datalist__empty__text"]/../../../..'
+    TOOLBAR = '//div[@class="b-sticky" and not (contains(@style,"visibility: hidden;"))]\
+        //div[contains(@data-cache-key, "undefined") and not(contains(@style,"display: none"))]'
+    CHECKBOXALL = '//div[@class="b-checkbox__checkmark"]'
+    DELETEBTN = '//div[@data-name="remove"]'
 
     def clear_box(self, driver):
-        empty_msg = self.driver.find_elements_by_xpath(self.EMPTYFOLDER)
-        flagEmpty = True
-
-        for item in empty_msg:
-            if "display: none" in item.get_attribute("style"):
-                flagEmpty = False
-
-        if not (empty_msg and flagEmpty):
-            scriptCheckAll = ToolbarJS.get_check_all_script()
-            scriptDelete = ToolbarJS.get_delete_script()
-
-            driver.execute_script(scriptCheckAll)
-            with WaitForPageLoad(self.driver):
-                driver.execute_script(scriptDelete)
+        WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_element_by_xpath(self.TOOLBAR)
+        )
+        self.driver.find_element_by_xpath(self.TOOLBAR + self.CHECKBOXALL).click()
+        with WaitForPageLoad(self.driver):
+            self.driver.find_element_by_xpath(self.TOOLBAR + self.DELETEBTN).click()
