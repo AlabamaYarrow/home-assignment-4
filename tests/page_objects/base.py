@@ -129,7 +129,7 @@ class ClearBoxMixin(WaitForPageLoad, ToolbarJS):
             if "display: none" in item.get_attribute("style"):
                 flagEmpty = False
 
-        if not empty_msg or not flagEmpty and empty_msg:
+        if not (empty_msg and flagEmpty):
             scriptCheckAll = ToolbarJS.get_check_all_script()
             scriptDelete = ToolbarJS.get_delete_script()
 
