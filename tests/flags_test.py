@@ -50,10 +50,11 @@ class SetFlagTest(unittest.TestCase, FlagsCommon):
 
         letter_page = LetterPage(self.driver)
         letter_page.letter_head.change_flag()
-        self.assertEquals(letter_page.letter_head.is_flag_set(), True)
+        flag_set = letter_page.letter_head.is_flag_set()
+        FlagsCommon.clear_sent_box(self.driver)
+        self.assertEquals(flag_set, True)
 
     def tearDown(self):
-        FlagsCommon.clear_sent_box(self.driver)
         self.driver.quit()
 
 
@@ -75,10 +76,11 @@ class UnsetFlagTest(unittest.TestCase, FlagsCommon):
         letter_page = LetterPage(self.driver)
         letter_page.letter_head.change_flag()
         letter_page.letter_head.change_flag()
-        self.assertEquals(letter_page.letter_head.is_flag_set(), False)
+        flag_set = letter_page.letter_head.is_flag_set()
+        FlagsCommon.clear_sent_box(self.driver)
+        self.assertEquals(flag_set, False)
 
     def tearDown(self):
-        FlagsCommon.clear_sent_box(self.driver)
         self.driver.quit()
 
 
@@ -99,10 +101,11 @@ class SetReadTest(unittest.TestCase, FlagsCommon):
 
         letter_page = LetterPage(self.driver)
         letter_page.letter_head.change_read_status()
-        self.assertEquals(letter_page.letter_head.is_read_status(), False)
+        is_read = letter_page.letter_head.is_read_status()
+        FlagsCommon.clear_sent_box(self.driver)
+        self.assertEquals(is_read, False)
 
     def tearDown(self):
-        FlagsCommon.clear_sent_box(self.driver)
         self.driver.quit()
 
 
@@ -124,8 +127,9 @@ class UnsetReadTest(unittest.TestCase, FlagsCommon):
         letter_page = LetterPage(self.driver)
         letter_page.letter_head.change_read_status()
         letter_page.letter_head.change_read_status()
-        self.assertEquals(letter_page.letter_head.is_flag_set(), False)
+        is_read = letter_page.letter_head.is_read_status()
+        FlagsCommon.clear_sent_box(self.driver)
+        self.assertEquals(is_read, True)
 
     def tearDown(self):
-        FlagsCommon.clear_sent_box(self.driver)
         self.driver.quit()

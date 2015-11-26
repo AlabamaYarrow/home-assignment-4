@@ -46,10 +46,10 @@ class NavigatePreviousTest(unittest.TestCase, NavigationCommon):
         letter_page = LetterPage(self.driver)
         letter_page.letter_toolbar.get_prev_letter()
         subject = letter_page.letter_head.get_subject()
-        self.assertEquals(subject, '3')
+        NavigationCommon.clear_sent_box(self.driver)
+        self.assertEquals(subject, '1')
 
     def tearDown(self):
-        NavigationCommon.clear_sent_box(self.driver)
         self.driver.quit()
 
 
@@ -72,10 +72,10 @@ class NavigateMultiplePreviousTest(unittest.TestCase, NavigationCommon):
         letter_page.letter_toolbar.get_prev_letter()
         letter_page.letter_toolbar.get_prev_letter()
         subject = letter_page.letter_head.get_subject()
+        NavigationCommon.clear_sent_box(self.driver)
         self.assertEquals(subject, '3')
 
     def tearDown(self):
-        NavigationCommon.clear_sent_box(self.driver)
         self.driver.quit()
 
 
@@ -100,10 +100,10 @@ class NavigateReturnTest(unittest.TestCase, NavigationCommon):
         letter_page.letter_toolbar.get_prev_letter()
 
         subject = letter_page.letter_head.get_subject()
+        NavigationCommon.clear_sent_box(self.driver)
         self.assertEquals('3', subject)
 
     def tearDown(self):
-        NavigationCommon.clear_sent_box(self.driver)
         self.driver.quit()
 
 
@@ -125,10 +125,10 @@ class NavigateNoPrevTest(unittest.TestCase, NavigationCommon):
 
         letter_page = LetterPage(self.driver)
         is_disabled = letter_page.letter_toolbar.prev_letter_is_disabled()
+        NavigationCommon.clear_sent_box(self.driver)
         self.assertEquals(True, is_disabled)
 
     def tearDown(self):
-        NavigationCommon.clear_sent_box(self.driver)
         self.driver.quit()
 
 
@@ -151,10 +151,10 @@ class NavigateNextTest(unittest.TestCase, NavigationCommon):
         letter_page = LetterPage(self.driver)
         letter_page.letter_toolbar.get_next_letter()
         subject = letter_page.letter_head.get_subject()
+        NavigationCommon.clear_sent_box(self.driver)
         self.assertEquals('1', subject)
 
     def tearDown(self):
-        NavigationCommon.clear_sent_box(self.driver)
         self.driver.quit()
 
 
@@ -178,10 +178,10 @@ class NavigateMultipleNextTest(unittest.TestCase, NavigationCommon):
         letter_page.letter_toolbar.get_next_letter()
         letter_page.letter_toolbar.get_next_letter()
         subject = letter_page.letter_head.get_subject()
+        NavigationCommon.clear_sent_box(self.driver)
         self.assertEquals('1', subject)
 
     def tearDown(self):
-        NavigationCommon.clear_sent_box(self.driver)
         self.driver.quit()
 
 
@@ -205,10 +205,10 @@ class NavigateReturnNextTest(unittest.TestCase, NavigationCommon):
         letter_page.letter_toolbar.get_prev_letter()
         letter_page.letter_toolbar.get_next_letter()
         subject = letter_page.letter_head.get_subject()
+        NavigationCommon.clear_sent_box(self.driver)
         self.assertEquals('1', subject)
 
     def tearDown(self):
-        NavigationCommon.clear_sent_box(self.driver)
         self.driver.quit()
 
 
@@ -230,8 +230,8 @@ class NavigateNoNextTest(unittest.TestCase, NavigationCommon):
 
         letter_page = LetterPage(self.driver)
         is_disabled = letter_page.letter_toolbar.next_letter_is_disabled()
+        NavigationCommon.clear_sent_box(self.driver)
         self.assertEquals(True, is_disabled)
 
     def tearDown(self):
-        NavigationCommon.clear_sent_box(self.driver)
         self.driver.quit()
