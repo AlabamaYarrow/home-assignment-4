@@ -6,6 +6,9 @@ from base import *
 class LetterPage(Page):
     PATH = ''
 
+    def open(self):
+        self.letter_head.get_subject()
+
     @property
     def letter_head(self):
         return LetterHead(self.driver)
@@ -27,56 +30,35 @@ class LetterHead(Component, WaitForPageLoad):
     unread_class = "b-letterstatus_unread"
 
     def get_subject(self):
-        WebDriverWait(self.driver, 30, 0.1).until(
-            lambda d: d.find_element_by_xpath(self.SUBJECT)
-        )
-        return self.driver.find_element_by_xpath(self.SUBJECT).text
+        return wait_until(self.driver, self.SUBJECT).text
 
     def get_email_from(self):
-        WebDriverWait(self.driver, 30, 0.1).until(
-            lambda d: d.find_element_by_xpath(self.FROMMAIL)
-        )
-        data = self.driver.find_element_by_xpath(self.FROMMAIL).text
+        data = wait_until(self.driver, self.FROMMAIL).text
         return data[data.index('<')+1:-1]
 
     def get_email_to(self):
-        WebDriverWait(self.driver, 30, 0.1).until(
-            lambda d: d.find_element_by_xpath(self.TOEMAIL)
-        )
-        return self.driver.find_element_by_xpath(self.TOEMAIL).text
+        return wait_until(self.driver, self.FROMMAIL).text
 
     def get_date(self):
-        WebDriverWait(self.driver, 30, 0.1).until(
-            lambda d: d.find_element_by_xpath(self.DATE)
-        )
-        return self.driver.find_element_by_xpath(self.DATE).text
+        return wait_until(self.driver, self.DATE).text
 
     def get_body(self):
-        WebDriverWait(self.driver, 30, 0.1).until(
-            lambda d: d.find_element_by_xpath(self.BODY)
-        )
-        return self.driver.find_element_by_xpath(self.BODY).text
+        return wait_until(self.driver, self.BODY).text
 
     def change_flag(self):
-        WebDriverWait(self.driver, 30, 0.1).until(
-            lambda d: d.find_element_by_xpath(self.FLAG)
-        )
-        self.driver.find_element_by_xpath(self.FLAG).click()
+        wait_until(self.driver, self.FLAG).click()
 
     def is_flag_set(self):          
         return self.flag_set_class in self.driver.find_element_by_xpath(self.FLAG).get_attribute("class")
 
     def change_read_status(self):
-        WebDriverWait(self.driver, 30, 0.1).until(
-            lambda d: d.find_element_by_xpath(self.READSTATUS)
-        )
-        self.driver.find_element_by_xpath(self.READSTATUS).click()
+        wait_until(self.driver, self.READSTATUS).click()
 
     def is_read_status(self):          
         return self.unread_class not in self.driver.find_element_by_xpath(self.READSTATUS).get_attribute("class")
 
 
-class LetterToolbar(Component, WaitForPageLoad, ToolbarJS):
+class LetterToolbar(Component, ToolbarJS):
     TOOLBAR = '//div[@data-mnemo="toolbar-letter"]'
     NEXT = '//div[@data-name="letter_next"]'
     PREV = '//div[@data-name="letter_prev"]'
@@ -89,50 +71,44 @@ class LetterToolbar(Component, WaitForPageLoad, ToolbarJS):
     CONFIRMSPAM = '//div[@class = "is-confirmSpam_in"]'
     ATTRLETTER = 'aria-disabled'
 
+    def __init__(self, driver):
+        super(LetterToolbar, self).__init__(driver)
+        self.toolbar = wait_until(self.driver, self.TOOLBAR)
+
     def prev_letter_is_disabled(self):
-        toolbar = self.driver.find_element_by_xpath(self.TOOLBAR)
-        is_disabled = toolbar.find_element_by_xpath(self.PREV).get_attribute(self.ATTRLETTER)
+        is_disabled = self.toolbar.find_element_by_xpath(self.PREV).get_attribute(self.ATTRLETTER)
         return is_disabled == u'disabled'
 
     def next_letter_is_disabled(self):
-        toolbar = self.driver.find_element_by_xpath(self.TOOLBAR)
-        is_disabled = toolbar.find_element_by_xpath(self.NEXT).get_attribute(self.ATTRLETTER)
+        is_disabled = self.toolbar.find_element_by_xpath(self.NEXT).get_attribute(self.ATTRLETTER)
         return is_disabled == u'disabled'
 
     def get_prev_letter(self):
-        toolbar = self.driver.find_element_by_xpath(self.TOOLBAR)
         subject = self.driver.find_element_by_xpath(LetterHead.SUBJECT)
         current_subject_text = subject.text
-        toolbar.find_element_by_xpath(self.PREV).click()
+        self.toolbar.find_element_by_xpath(self.PREV).click()
         WebDriverWait(self.driver, 10, 0.1).until(
             lambda d:
                 (d.find_element_by_xpath(LetterHead.SUBJECT).text != current_subject_text)
         )
 
     def get_next_letter(self):
-        toolbar = self.driver.find_element_by_xpath(self.TOOLBAR)
         subject = self.driver.find_element_by_xpath(LetterHead.SUBJECT)
         current_subject_text = subject.text
-        toolbar.find_element_by_xpath(self.NEXT).click()
+        self.toolbar.find_element_by_xpath(self.NEXT).click()
         WebDriverWait(self.driver, 10, 0.1).until(
             lambda d:
                 d.find_element_by_xpath(LetterHead.SUBJECT).text != current_subject_text
         )
 
     def reply(self):
-        toolbar = self.driver.find_element_by_xpath(self.TOOLBAR)
-        with WaitForPageLoad(self.driver):
-            toolbar.find_element_by_xpath(self.REPLY).click()
+        wait_until(self.toolbar, self.REPLY).click()
 
     def reply_all(self):
-        toolbar = self.driver.find_element_by_xpath(self.TOOLBAR)
-        with WaitForPageLoad(self.driver):
-            toolbar.find_element_by_xpath(self.REPLYALL).click()
+        wait_until(self.toolbar, self.REPLYALL).click()
 
     def forward(self):
-        toolbar = self.driver.find_element_by_xpath(self.TOOLBAR)
-        with WaitForPageLoad(self.driver):
-            toolbar.find_element_by_xpath(self.FORWARD).click()
+        wait_until(self.toolbar, self.FORWARD).click()
 
     def delete(self):
         script = ToolbarJS.get_delete_script()
@@ -146,7 +122,7 @@ class LetterToolbar(Component, WaitForPageLoad, ToolbarJS):
 
     def spam(self):
         scriptBeforePopup = ToolbarJS.get_spam_script()
-        scriptAfterPopup  = ToolbarJS.get_spam_confirm_script()
+        scriptAfterPopup = ToolbarJS.get_spam_confirm_script()
 
         self.driver.execute_script(scriptBeforePopup)
 
@@ -155,4 +131,3 @@ class LetterToolbar(Component, WaitForPageLoad, ToolbarJS):
         )
 
         self.driver.execute_script(scriptAfterPopup)
-

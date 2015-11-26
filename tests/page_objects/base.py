@@ -33,6 +33,12 @@ class Component(object):
         self.driver = driver
 
 
+def wait_until(driver, element_xpath):
+    return WebDriverWait(driver, 30, 0.1).until(
+            lambda d: d.find_element_by_xpath(element_xpath)
+    )
+
+
 def wait_for(condition_function):
     start_time = time.time()
     while time.time() < start_time + 10:
@@ -41,6 +47,7 @@ def wait_for(condition_function):
     raise Exception(
         'Timeout waiting for {}'.format(condition_function.__name__)
     )
+
 
 class WaitForPageLoad(object):
     CHANGEBLOCK = '//div[@class="b-layout  b-layout_flex"]'

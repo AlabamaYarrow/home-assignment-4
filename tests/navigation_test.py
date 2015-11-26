@@ -1,7 +1,6 @@
 from page_objects.base import *
 from page_objects.auth_page import AuthPage
 from page_objects.inbox_page import InboxPage
-from page_objects.sent_page import SentPage
 from page_objects.letter_page import LetterPage
 
 
@@ -17,8 +16,7 @@ class NavigationCommon(object):
     def clear_sent_box(driver):
         inbox_page = InboxPage(driver)
         inbox_page.folders.get_sent_inbox()
-        sent_page = SentPage(driver)
-        sent_page.clear_box(driver)
+        inbox_page.clear_box(driver)
 
     @staticmethod
     def get_driver():
@@ -40,8 +38,7 @@ class NavigatePreviousTest(unittest.TestCase, NavigationCommon):
     def test(self):
         inbox_page = InboxPage(self.driver)
         inbox_page.folders.get_sent_inbox()
-        sent_page = SentPage(self.driver)
-        sent_page.open_letter('2')
+        inbox_page.open_letter('2')
 
         letter_page = LetterPage(self.driver)
         letter_page.letter_toolbar.get_prev_letter()
@@ -65,8 +62,7 @@ class NavigateMultiplePreviousTest(unittest.TestCase, NavigationCommon):
     def test(self):
         inbox_page = InboxPage(self.driver)
         inbox_page.folders.get_sent_inbox()
-        sent_page = SentPage(self.driver)
-        sent_page.open_letter('1')
+        inbox_page.open_letter('1')
 
         letter_page = LetterPage(self.driver)
         letter_page.letter_toolbar.get_prev_letter()
@@ -91,9 +87,7 @@ class NavigateReturnTest(unittest.TestCase, NavigationCommon):
     def test(self):
         inbox_page = InboxPage(self.driver)
         inbox_page.folders.get_sent_inbox()
-        sent_page = SentPage(self.driver)
-        sent_page.wait_for_letter('3')
-        sent_page.open_letter('3')
+        inbox_page.open_letter('3')
 
         letter_page = LetterPage(self.driver)
         letter_page.letter_toolbar.get_next_letter()
@@ -119,9 +113,7 @@ class NavigateNoPrevTest(unittest.TestCase, NavigationCommon):
     def test(self):
         inbox_page = InboxPage(self.driver)
         inbox_page.folders.get_sent_inbox()
-        sent_page = SentPage(self.driver)
-        sent_page.wait_for_letter('3')
-        sent_page.open_letter('3')
+        inbox_page.open_letter('3')
 
         letter_page = LetterPage(self.driver)
         is_disabled = letter_page.letter_toolbar.prev_letter_is_disabled()
@@ -144,9 +136,7 @@ class NavigateNextTest(unittest.TestCase, NavigationCommon):
     def test(self):
         inbox_page = InboxPage(self.driver)
         inbox_page.folders.get_sent_inbox()
-        sent_page = SentPage(self.driver)
-        sent_page.wait_for_letter('2')
-        sent_page.open_letter('2')
+        inbox_page.open_letter('2')
 
         letter_page = LetterPage(self.driver)
         letter_page.letter_toolbar.get_next_letter()
@@ -170,9 +160,7 @@ class NavigateMultipleNextTest(unittest.TestCase, NavigationCommon):
     def test(self):
         inbox_page = InboxPage(self.driver)
         inbox_page.folders.get_sent_inbox()
-        sent_page = SentPage(self.driver)
-        sent_page.wait_for_letter('3')
-        sent_page.open_letter('3')
+        inbox_page.open_letter('3')
 
         letter_page = LetterPage(self.driver)
         letter_page.letter_toolbar.get_next_letter()
@@ -197,9 +185,7 @@ class NavigateReturnNextTest(unittest.TestCase, NavigationCommon):
     def test(self):
         inbox_page = InboxPage(self.driver)
         inbox_page.folders.get_sent_inbox()
-        sent_page = SentPage(self.driver)
-        sent_page.wait_for_letter('1')
-        sent_page.open_letter('1')
+        inbox_page.open_letter('1')
 
         letter_page = LetterPage(self.driver)
         letter_page.letter_toolbar.get_prev_letter()
@@ -224,9 +210,7 @@ class NavigateNoNextTest(unittest.TestCase, NavigationCommon):
     def test(self):
         inbox_page = InboxPage(self.driver)
         inbox_page.folders.get_sent_inbox()
-        sent_page = SentPage(self.driver)
-        sent_page.wait_for_letter('1')
-        sent_page.open_letter('1')
+        inbox_page.open_letter('1')
 
         letter_page = LetterPage(self.driver)
         is_disabled = letter_page.letter_toolbar.next_letter_is_disabled()

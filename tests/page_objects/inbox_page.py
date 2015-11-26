@@ -3,8 +3,8 @@
 from base import *
 
 
-class InboxPage(Page, ClearBoxMixin, WaitForPageLoad):
-    PATH = ''
+class InboxPage(Page, ClearBoxMixin):
+    PATH = '/messages'
 
     @property
     def top_status(self):
@@ -24,13 +24,8 @@ class InboxPage(Page, ClearBoxMixin, WaitForPageLoad):
         BODELETTER = '//body'
         SENTSTATUS = '//div[@class="message-sent__title"]'
 
-        with WaitForPageLoad(self.driver):
-            self.driver.find_element_by_xpath(BUTTONSENDFROM).click()
-
-        WebDriverWait(self.driver, 30, 0.1).until(
-            lambda d: d.find_element_by_xpath(EMAILFIELDTO) and
-            self.driver.find_element_by_xpath(BUTTONSEND)
-        )
+        wait_until(self.driver, BUTTONSENDFROM).click()
+        wait_until(self.driver, EMAILFIELDTO)
 
         self.driver.find_element_by_xpath(EMAILFIELDTO).send_keys(email_to)
         if email_copy != "":
@@ -41,42 +36,39 @@ class InboxPage(Page, ClearBoxMixin, WaitForPageLoad):
         self.driver.find_element_by_xpath(BODELETTER).send_keys(nameLetter)
         self.driver.switch_to_default_content()
 
-        with WaitForPageLoad(self.driver):
-            self.driver.find_element_by_xpath(BUTTONSEND).click()
+        wait_until(self.driver, BUTTONSEND).click()
 
     def have_letter(self, subject):
-        LETTER = '//a[@data-subject="'+subject+'"]'  
+        letter = '//a[@data-subject="'+subject+'"]'
         try:
-            self.driver.find_element_by_xpath(LETTER)
+            self.driver.find_element_by_xpath(letter)
             return True
         except NoSuchElementException:   
             return False
 
+    def open_letter(self, subject):
+        letter = '//a[@data-subject="'+subject+'"]'
+        try:
+            self.driver.find_element_by_xpath(letter).click()
+        except NoSuchElementException:
+            self.driver.get(self.driver.current_url)
+            self.driver.find_element_by_xpath(letter).click()
 
 
-class Folders(Component, WaitForPageLoad):
-    SENTFOLDER = '//i[contains(@class, "ico_folder_send")]'
-    INBOXFOLDER = '//i[contains(@class, "ico_folder_inbox")]'
-    SPAMFOLDER = '//i[contains(@class, "ico_folder_spam")]'
-    ARCHIVEFOLDER = '//i[contains(@class, "ico_folder_archive")]'
-    TRASHFOLDER = '//i[contains(@class, "ico_folder_trash")]'
+class Folders(Component):
+    SENTFOLDER = '/sent'
+    RECIEVEDFOLDER = '/inbox'
+    SPAMFOLDER = '/spam'
+    TRASHFOLDER = '/trash'
 
     def get_sent_inbox(self):
-        with WaitForPageLoad(self.driver):
-            self.driver.find_element_by_xpath(self.SENTFOLDER).click()
+        self.driver.get(Page.BASE_URL + InboxPage.PATH + self.SENTFOLDER)
 
     def get_recieved_inbox(self):
-        with WaitForPageLoad(self.driver):
-            self.driver.find_element_by_xpath(self.INBOXFOLDER).click()
+        self.driver.get(Page.BASE_URL + InboxPage.PATH + self.RECIEVEDFOLDER)
 
     def get_spam_inbox(self):
-        with WaitForPageLoad(self.driver):
-            self.driver.find_element_by_xpath(self.SPAMFOLDER).click()
-
-    def get_archive_inbox(self):
-        with WaitForPageLoad(self.driver):
-            self.driver.find_element_by_xpath(self.ARCHIVEFOLDER).click()
+        self.driver.get(Page.BASE_URL + InboxPage.PATH + self.SPAMFOLDER)
 
     def get_trash_inbox(self):
-        with WaitForPageLoad(self.driver):
-            self.driver.find_element_by_xpath(self.BINFOLDER).click()
+        self.driver.get(Page.BASE_URL + InboxPage.PATH + self.TRASHFOLDER)

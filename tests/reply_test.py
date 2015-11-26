@@ -2,7 +2,6 @@
 from page_objects.base import *
 from page_objects.auth_page import AuthPage
 from page_objects.inbox_page import InboxPage
-from page_objects.sent_page import SentPage
 from page_objects.letter_page import LetterPage
 from page_objects.sent_letter_page import SentLetterPage
 
@@ -17,8 +16,7 @@ class ReplyCommon(object):
     def clear_inbox(driver):
         inbox_page = InboxPage(driver)
         inbox_page.folders.get_sent_inbox()
-        sent_page = SentPage(driver)
-        sent_page.clear_box(driver)
+        inbox_page.clear_box(driver)
 
     @staticmethod
     def get_driver():
@@ -40,8 +38,7 @@ class ReplyEmailToTest(unittest.TestCase, ReplyCommon):
     def test(self):
         inbox_page = InboxPage(self.driver)
         inbox_page.folders.get_sent_inbox()
-        sent_page = SentPage(self.driver)
-        sent_page.open_letter('1')
+        inbox_page.open_letter('1')
         letter_page = LetterPage(self.driver)
         letter_page.letter_toolbar.reply()
         sent_letter_page = SentLetterPage(self.driver)
