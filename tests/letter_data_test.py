@@ -46,10 +46,10 @@ class LetterSubjectTest(unittest.TestCase, LetterDataCommon):
 
         letter_page = LetterPage(self.driver)
         subject = letter_page.letter_head.get_subject()
+        LetterDataCommon.clear_sent_box(self.driver)
         self.assertEquals(subject, '1')
 
     def tearDown(self):
-        LetterDataCommon.clear_sent_box(self.driver)
         self.driver.quit()
 
 
@@ -70,10 +70,10 @@ class LetterEmailFromTest(unittest.TestCase, LetterDataCommon):
 
         letter_page = LetterPage(self.driver)
         email_from = letter_page.letter_head.get_email_from()
+        LetterDataCommon.clear_sent_box(self.driver)
         self.assertEquals(email_from, USER_EMAIL)
 
     def tearDown(self):
-        LetterDataCommon.clear_sent_box(self.driver)
         self.driver.quit()
 
 
@@ -94,10 +94,10 @@ class LetterEmailToTest(unittest.TestCase, LetterDataCommon):
 
         letter_page = LetterPage(self.driver)
         email_to = letter_page.letter_head.get_email_to()
+        LetterDataCommon.clear_sent_box(self.driver)
         self.assertEquals(email_to, 'nikuda@mail.ru')
 
     def tearDown(self):
-        LetterDataCommon.clear_sent_box(self.driver)
         self.driver.quit()
 
 
@@ -118,10 +118,10 @@ class LetterDatetimeExistsTest(unittest.TestCase, LetterDataCommon):
 
         letter_page = LetterPage(self.driver)
         letter_date = letter_page.letter_head.get_date()
+        LetterDataCommon.clear_sent_box(self.driver)
         self.assertNotEquals(letter_date, '')
 
     def tearDown(self):
-        LetterDataCommon.clear_sent_box(self.driver)
         self.driver.quit()
 
 
@@ -142,8 +142,8 @@ class LetterBodyExistsTest(unittest.TestCase, LetterDataCommon):
 
         letter_page = LetterPage(self.driver)
         letter_body = letter_page.letter_head.get_body()
+        LetterDataCommon.clear_sent_box(self.driver)
         self.assertNotEquals(letter_body, '')
 
     def tearDown(self):
-        LetterDataCommon.clear_sent_box(self.driver)
         self.driver.quit()

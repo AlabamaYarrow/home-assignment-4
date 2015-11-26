@@ -45,10 +45,11 @@ class ReplyEmailToTest(unittest.TestCase, ReplyCommon):
         letter_page = LetterPage(self.driver)
         letter_page.letter_toolbar.reply()
         sent_letter_page = SentLetterPage(self.driver)
-        self.assertEqual(sent_letter_page.data.get_email_to(), 'nikuda@mail.ru')
+        email_to = sent_letter_page.data.get_email_to()
+        ReplyCommon.clear_inbox(self.driver)
+        self.assertEqual(email_to, 'nikuda@mail.ru')
 
     def tearDown(self):
-        ReplyCommon.clear_inbox(self.driver)
         self.driver.quit()
 
 
@@ -70,10 +71,11 @@ class ReplySubjectTest(unittest.TestCase, ReplyCommon):
         letter_page = LetterPage(self.driver)
         letter_page.letter_toolbar.reply()
         sent_letter_page = SentLetterPage(self.driver)
-        self.assertEqual(sent_letter_page.data.get_subject(), 'Re: 1')
+        subject = sent_letter_page.data.get_subject()
+        ReplyCommon.clear_inbox(self.driver)
+        self.assertEqual(subject, 'Re: 1')
 
     def tearDown(self):
-        ReplyCommon.clear_inbox(self.driver)
         self.driver.quit()
 
 
@@ -97,10 +99,10 @@ class ReplyMailTextTest(unittest.TestCase, ReplyCommon):
         letter_page.letter_toolbar.reply()
         sent_letter_page = SentLetterPage(self.driver)
         body_text = sent_letter_page.data.get_body()
+        ReplyCommon.clear_inbox(self.driver)
         self.assertTrue('abrakadabra' in body_text)
 
     def tearDown(self):
-        ReplyCommon.clear_inbox(self.driver)
         self.driver.quit()
 
 
@@ -121,10 +123,11 @@ class ReplyAllEmailToTest(unittest.TestCase, ReplyCommon):
         letter_page = LetterPage(self.driver)
         letter_page.letter_toolbar.reply_all()
         sent_letter_page = SentLetterPage(self.driver)
-        self.assertEqual(sent_letter_page.data.get_email_to(), 'nikuda@mail.ru')
+        email_to = sent_letter_page.data.get_email_to()
+        ReplyCommon.clear_inbox(self.driver)
+        self.assertEqual(email_to, 'nikuda@mail.ru')
 
     def tearDown(self):
-        ReplyCommon.clear_inbox(self.driver)
         self.driver.quit()
 
 
@@ -146,10 +149,11 @@ class ReplyAllSubjectTest(unittest.TestCase, ReplyCommon):
         letter_page = LetterPage(self.driver)
         letter_page.letter_toolbar.reply_all()
         sent_letter_page = SentLetterPage(self.driver)
-        self.assertEqual(sent_letter_page.data.get_subject(), 'Re: 1')
+        subject = sent_letter_page.data.get_subject()
+        ReplyCommon.clear_inbox(self.driver)
+        self.assertEqual(subject, 'Re: 1')
 
     def tearDown(self):
-        ReplyCommon.clear_inbox(self.driver)
         self.driver.quit()
 
 
@@ -173,10 +177,10 @@ class ReplyAllMailTextTest(unittest.TestCase, ReplyCommon):
         letter_page.letter_toolbar.reply_all()
         sent_letter_page = SentLetterPage(self.driver)
         body_text = sent_letter_page.data.get_body()
+        ReplyCommon.clear_inbox(self.driver)
         self.assertTrue('abrakadabra' in body_text)
 
     def tearDown(self):
-        ReplyCommon.clear_inbox(self.driver)
         self.driver.quit()
 
 
@@ -197,10 +201,11 @@ class ForwardNoEmailToTest(unittest.TestCase, ReplyCommon):
         letter_page = LetterPage(self.driver)
         letter_page.letter_toolbar.forward()
         sent_letter_page = SentLetterPage(self.driver)
-        self.assertEqual(sent_letter_page.data.get_email_to(), '')
+        email_to = sent_letter_page.data.get_email_to()
+        ReplyCommon.clear_inbox(self.driver)
+        self.assertEqual(email_to, '')
 
     def tearDown(self):
-        ReplyCommon.clear_inbox(self.driver)
         self.driver.quit()
 
 
@@ -222,10 +227,11 @@ class ForwardSubjectTest(unittest.TestCase, ReplyCommon):
         letter_page = LetterPage(self.driver)
         letter_page.letter_toolbar.forward()
         sent_letter_page = SentLetterPage(self.driver)
-        self.assertEqual(sent_letter_page.data.get_subject(), 'Fwd: 1')
+        subject = sent_letter_page.data.get_subject()
+        ReplyCommon.clear_inbox(self.driver)
+        self.assertEqual(subject, 'Fwd: 1')
 
     def tearDown(self):
-        ReplyCommon.clear_inbox(self.driver)
         self.driver.quit()
 
 
@@ -249,8 +255,8 @@ class ForwardMailTextTest(unittest.TestCase, ReplyCommon):
         letter_page.letter_toolbar.forward()
         sent_letter_page = SentLetterPage(self.driver)
         body_text = sent_letter_page.data.get_body()
+        ReplyCommon.clear_inbox(self.driver)
         self.assertTrue('abrakadabra' in body_text)
 
     def tearDown(self):
-        ReplyCommon.clear_inbox(self.driver)
         self.driver.quit()
