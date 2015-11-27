@@ -4,7 +4,7 @@ import sys
 import unittest
 
 from tests.review_test import ReviewTest
-from tests import auth_test, navigation_test, reply_test, letter_data_test, flags_test
+from tests import auth_test, navigation_test, reply_test, letter_data_test, flags_test, moving_test
 
 
 if __name__ == '__main__':
@@ -14,7 +14,7 @@ if __name__ == '__main__':
         unittest.makeSuite(navigation_test.NavigateMultiplePreviousTest),
         unittest.makeSuite(navigation_test.NavigateReturnTest),
         unittest.makeSuite(navigation_test.NavigateNoPrevTest),
-        
+
         unittest.makeSuite(navigation_test.NavigateNextTest),
         unittest.makeSuite(navigation_test.NavigateMultipleNextTest),
         unittest.makeSuite(navigation_test.NavigateReturnNextTest),
@@ -42,6 +42,11 @@ if __name__ == '__main__':
         unittest.makeSuite(flags_test.UnsetFlagTest),
         unittest.makeSuite(flags_test.SetReadTest),
         unittest.makeSuite(flags_test.UnsetReadTest),
+
+        unittest.makeSuite(moving_test.MoveToTrashTest),
+        unittest.makeSuite(moving_test.MoveToSpamTest),
+        unittest.makeSuite(moving_test.MoveToArchiveTest),
+        unittest.makeSuite(moving_test.MoveToTest),
     ))
     result = unittest.TextTestRunner().run(suite)
     sys.exit(not result.wasSuccessful())

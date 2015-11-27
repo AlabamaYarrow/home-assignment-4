@@ -83,4 +83,4 @@ class Folders(Component, WaitForPageLoad):
 
     def get_trash_inbox(self):
         with WaitForPageLoad(self.driver):
-            self.driver.find_element_by_xpath(self.BINFOLDER).click()
+            self.driver.find_element_by_xpath(self.TRASHFOLDER).click()

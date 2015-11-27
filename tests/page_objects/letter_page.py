@@ -164,7 +164,6 @@ class LetterToolbar(Component, WaitForPageLoad):
         with WaitForPageLoad(self.driver):
             self.driver.find_element_by_xpath(self.TOOLBAR + self.ARCHIVE).click()
 
-
     def spam(self):
         WebDriverWait(self.driver, 30, 0.1).until(
             lambda d: d.find_element_by_xpath(self.TOOLBAR)
