@@ -5,7 +5,6 @@ from page_objects.auth_page import AuthPage
 from page_objects.inbox_page import InboxPage
 from page_objects.sent_page import SentPage
 from page_objects.letter_page import LetterPage
-from page_objects.sent_letter_page import SentLetterPage
 
 
 class FlagsCommon(object):

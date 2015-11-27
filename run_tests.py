@@ -3,7 +3,7 @@
 import sys
 import unittest
 
-from tests import auth_test, navigation_test, reply_test, letter_data_test, flags_test, moving_test
+from tests import navigation_test, reply_test, letter_data_test, flags_test, moving_test
 
 
 if __name__ == '__main__':
