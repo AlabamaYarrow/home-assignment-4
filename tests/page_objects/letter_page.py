@@ -17,7 +17,7 @@ class LetterPage(Page):
 
 class LetterHead(Component, WaitForPageLoad):
     SUBJECT = '//div[@class="b-letter__head__subj__text"]'
-    FROMMAIL = '//div[@data-mnemo="from"]'
+    FROMEMAIL = '//div[@data-mnemo="from"]'
     TOEMAIL = "//span[@class='b-letter__head__addrs__value']"
     DATE = "//div[@class='b-letter__head__date']"
     BODY = "//div[@class='js-body b-letter__body__wrap']"
@@ -34,9 +34,9 @@ class LetterHead(Component, WaitForPageLoad):
 
     def get_email_from(self):
         WebDriverWait(self.driver, 30, 0.1).until(
-            lambda d: d.find_element_by_xpath(self.FROMMAIL)
+            lambda d: d.find_element_by_xpath(self.FROMEMAIL)
         )
-        data = self.driver.find_element_by_xpath(self.FROMMAIL).text
+        data = self.driver.find_element_by_xpath(self.FROMEMAIL).text
         return data[data.index('<')+1:-1]
 
     def get_email_to(self):
@@ -76,19 +76,27 @@ class LetterHead(Component, WaitForPageLoad):
         return self.unread_class not in self.driver.find_element_by_xpath(self.READSTATUS).get_attribute("class")
 
 
-class LetterToolbar(Component, WaitForPageLoad, ToolbarJS):
+class LetterToolbar(Component, WaitForPageLoad):
     TOOLBAR = '//div[@data-mnemo="toolbar-letter"]'
     NEXT = '//div[@data-name="letter_next"]'
-    TOOLBARPREV = '../../../../../../../../../..'
+    TOOLBARPREV = '../../../../../../../../../..' #FIXIT
     PREV = '//div[@data-name="letter_prev"]'
     REPLY = '//span[text() = "Ответить"]'
     REPLYALL = '//span[text() = "Ответить всем"]'
     FORWARD = '//span[text() = "Переслать"]'
     DELETE = '//span[text() = "Удалить"]'
     ARCHIVEDROP = '//div[@data-shortcut="e: \'archive\' "]'
-    ARCHIVE = '//span[text() = "В архив"]'
+    
     CONFIRMSPAM = '//div[@class = "is-confirmSpam_in"]'
     ATTRLETTER = 'aria-disabled'
+    
+    TOOLBAR = '//div[contains(@id,"b-toolbar__right")]\
+        /div[not(contains(@style,"display: none"))]'
+    DELETE = '//div[@data-name="remove"]'
+    ARCHIVEDROP = '//div[contains(@data-shortcut,"archive")]'
+    ARCHIVE = '//div[contains(@class,"b-dropdown__list")]/a'
+    SPAM = '//div[@data-name="spam"]'
+    SPAMPOOPUP = '//div[@class="is-confirmSpam_in"]//button[contains(@class,"confirm-cancel")]'
 
     def prev_letter_is_disabled(self):
         toolbar = self.driver.find_element_by_xpath(self.TOOLBAR)
@@ -140,24 +148,32 @@ class LetterToolbar(Component, WaitForPageLoad, ToolbarJS):
             toolbar.find_element_by_xpath(self.FORWARD).click()
 
     def delete(self):
-        script = ToolbarJS.get_delete_script()
+        WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_element_by_xpath(self.TOOLBAR)
+        )
         with WaitForPageLoad(self.driver):
-            self.driver.execute_script(script)
+            self.driver.find_element_by_xpath(self.TOOLBAR + self.DELETE).click()
 
     def archive(self):
-        script = ToolbarJS.get_archive_script()
-        with WaitForPageLoad(self.driver):
-            self.driver.execute_script(script)
-
-    def spam(self):
-        scriptBeforePopup = ToolbarJS.get_spam_script()
-        scriptAfterPopup  = ToolbarJS.get_spam_confirm_script()
-
-        self.driver.execute_script(scriptBeforePopup)
-
         WebDriverWait(self.driver, 30, 0.1).until(
-            lambda d: d.find_element_by_xpath(self.CONFIRMSPAM)
+            lambda d: d.find_element_by_xpath(self.TOOLBAR + self.ARCHIVEDROP)
         )
 
-        self.driver.execute_script(scriptAfterPopup)
+        self.driver.find_element_by_xpath(self.TOOLBAR + self.ARCHIVEDROP).click()
 
+        with WaitForPageLoad(self.driver):
+            self.driver.find_element_by_xpath(self.TOOLBAR + self.ARCHIVE).click()
+
+
+    def spam(self):
+        WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_element_by_xpath(self.TOOLBAR)
+        )
+        self.driver.find_element_by_xpath(self.TOOLBAR + self.SPAM).click()
+
+        WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_element_by_xpath(self.SPAMPOOPUP)
+        )
+
+        with WaitForPageLoad(self.driver):
+            self.driver.find_element_by_xpath(self.SPAMPOOPUP).click()

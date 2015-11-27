@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 import os
 import urlparse
 import unittest
@@ -8,6 +7,7 @@ import time
 from selenium.webdriver import DesiredCapabilities, Remote
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.support import expected_conditions as EC
 
 
 USER_EMAIL = os.environ['TTHA4USER']
@@ -26,7 +26,6 @@ class Page(object):
         url = urlparse.urljoin(self.BASE_URL, self.PATH)
         self.driver.get(url)
         self.driver.maximize_window()
-
 
 class Component(object):
     def __init__(self, driver):
@@ -58,59 +57,6 @@ class WaitForPageLoad(object):
     def __exit__(self, *_):
         wait_for(self.page_has_loaded)
 
-
-class ToolbarJS(object):
-    ## TODO: перенести переменную scriptFindToolbar в описание класса, а в методах вызывать её
-
-    @staticmethod
-    def get_check_all_script():
-        scriptFindToolbar = '\
-            topTollbar = $(".b-sticky").filter(function () { return $(this).css("z-index") == 100 });\
-            rightToolbar = topTollbar.find("#b-toolbar__right").children();\
-            visibleToolbar = $(rightToolbar).filter(function () { return $(this).css("display") != "none" });'
-
-        return scriptFindToolbar + '\
-        checkbox = visibleToolbar.find(".b-checkbox__checkmark");\
-        checkbox.click();'
-
-    @staticmethod
-    def get_delete_script():
-        scriptFindToolbar = '\
-            topTollbar = $(".b-sticky").filter(function () { return $(this).css("z-index") == 100 });\
-            rightToolbar = topTollbar.find("#b-toolbar__right").children();\
-            visibleToolbar = $(rightToolbar).filter(function () { return $(this).css("display") != "none" });'
-
-        return scriptFindToolbar + '\
-        btn = visibleToolbar.find("span").filter(function () { return $(this).text() == "Удалить" });\
-        btn.click();'
-
-    @staticmethod
-    def get_archive_script():
-        scriptFindToolbar = '\
-            topTollbar = $(".b-sticky").filter(function () { return $(this).css("z-index") == 100 });\
-            rightToolbar = topTollbar.find("#b-toolbar__right").children();\
-            visibleToolbar = $(rightToolbar).filter(function () { return $(this).css("display") != "none" });'
-
-        return scriptFindToolbar + '\
-        btn = visibleToolbar.find("span").filter(function () { return $(this).text() == "В архив" });\
-        btn.click();'
-
-    @staticmethod
-    def get_spam_script():
-        scriptFindToolbar = '\
-            topTollbar = $(".b-sticky").filter(function () { return $(this).css("z-index") == 100 });\
-            rightToolbar = topTollbar.find("#b-toolbar__right").children();\
-            visibleToolbar = $(rightToolbar).filter(function () { return $(this).css("display") != "none" });'
-
-        return scriptFindToolbar + '\
-        btn = visibleToolbar.find("span").filter(function () { return $(this).text() == "Спам" });\
-        btn.click();'
-
-    @staticmethod
-    def get_spam_confirm_script():
-        return '$(".confirm-cancel").filter(function () { return $(this).text() == "Да" }).click();'
-
-
 class TopStatus(Component):
     EMAIL = '//i[@id="PH_user-email"]'
 
@@ -118,16 +64,21 @@ class TopStatus(Component):
         return self.driver.find_element_by_xpath(self.EMAIL).text
 
 
-class ClearBoxMixin(WaitForPageLoad, ToolbarJS):
+class ClearBoxMixin(WaitForPageLoad):
     TOOLBAR = '//div[@class="b-sticky" and not (contains(@style,"visibility: hidden;"))]\
         //div[contains(@data-cache-key, "undefined") and not(contains(@style,"display: none"))]'
     CHECKBOXALL = '//div[@class="b-checkbox__checkmark"]'
     DELETEBTN = '//div[@data-name="remove"]'
+    EMPTYBOX = '//div[@class="b-layout  b-layout_flex"]\
+        //div[contains(@data-cache-key, "undefined") and not(contains(@style,"display: none"))]\
+        //div[contains(@ class, "b-datalist__empty")]'
 
     def clear_box(self, driver):
-        WebDriverWait(self.driver, 30, 0.1).until(
-            lambda d: d.find_element_by_xpath(self.TOOLBAR)
-        )
-        self.driver.find_element_by_xpath(self.TOOLBAR + self.CHECKBOXALL).click()
-        with WaitForPageLoad(self.driver):
-            self.driver.find_element_by_xpath(self.TOOLBAR + self.DELETEBTN).click()
+        empty_box = self.driver.find_elements_by_xpath(self.EMPTYBOX)
+        if not len(empty_box):
+            WebDriverWait(self.driver, 30, 0.1).until(
+                lambda d: d.find_element_by_xpath(self.TOOLBAR)
+            )
+            self.driver.find_element_by_xpath(self.TOOLBAR + self.CHECKBOXALL).click()
+            with WaitForPageLoad(self.driver):
+                self.driver.find_element_by_xpath(self.TOOLBAR + self.DELETEBTN).click()
