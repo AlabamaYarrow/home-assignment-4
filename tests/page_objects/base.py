@@ -27,19 +27,21 @@ class Page(object):
         self.driver.get(url)
         self.driver.maximize_window()
 
+
 class Component(object):
     def __init__(self, driver):
         self.driver = driver
 
 
-def wait_for(condition_function):
-    start_time = time.time()
-    while time.time() < start_time + 10:
-        if condition_function():
-            return True
-    raise Exception(
-        'Timeout waiting for {}'.format(condition_function.__name__)
-    )
+# def wait_for(condition_function):
+#     start_time = time.time()
+#     while time.time() < start_time + 10:
+#         if condition_function():
+#             return True
+#     raise Exception(
+#         'Timeout waiting for {}'.format(condition_function.__name__)
+#     )
+
 
 class WaitForPageLoad(object):
     CHANGEBLOCK = '//div[@class="b-layout  b-layout_flex"]'
@@ -55,7 +57,12 @@ class WaitForPageLoad(object):
         return new_page != self.old_page
 
     def __exit__(self, *_):
-        wait_for(self.page_has_loaded)
+        WebDriverWait(self.driver, 10, 0.1).until(
+            lambda d:
+                (d.find_element_by_xpath(self.CHANGEBLOCK).text != self.old_page)
+        )
+        # wait_for(self.page_has_loaded)
+
 
 class TopStatus(Component):
     EMAIL = '//i[@id="PH_user-email"]'
