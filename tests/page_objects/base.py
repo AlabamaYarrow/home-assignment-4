@@ -2,7 +2,6 @@
 import os
 import urlparse
 import unittest
-import time
 
 from selenium.webdriver import DesiredCapabilities, Remote
 from selenium.webdriver.support.ui import WebDriverWait
