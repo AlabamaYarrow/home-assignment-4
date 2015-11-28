@@ -42,6 +42,10 @@ class InboxPage(Page, ClearBoxMixin, WaitForPageLoad):
         self.driver.find_element_by_xpath(BODELETTER).send_keys(nameLetter)
         self.driver.switch_to_default_content()
 
+        WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_element_by_xpath(BUTTONSEND)
+        )
+
         with WaitForPageLoad(self.driver):
             self.driver.find_element_by_xpath(BUTTONSEND).click()
 
