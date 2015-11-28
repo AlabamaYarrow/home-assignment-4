@@ -77,26 +77,26 @@ class LetterHead(Component, WaitForPageLoad):
 
 
 class LetterToolbar(Component, WaitForPageLoad):
-    TOOLBAR = '//div[@data-mnemo="toolbar-letter"]'
+    TOOLBAR = '//div[contains(@id,"b-toolbar__right")]\
+        /div[not(contains(@style,"display: none"))]'
     NEXT = '//div[@data-name="letter_next"]'
-    TOOLBARPREV = '../../../../../../../../../..' #FIXIT
     PREV = '//div[@data-name="letter_prev"]'
     REPLY = '//span[text() = "Ответить"]'
     REPLYALL = '//span[text() = "Ответить всем"]'
     FORWARD = '//span[text() = "Переслать"]'
-    DELETE = '//span[text() = "Удалить"]'
-    ARCHIVEDROP = '//div[@data-shortcut="e: \'archive\' "]'
-    
     CONFIRMSPAM = '//div[@class = "is-confirmSpam_in"]'
     ATTRLETTER = 'aria-disabled'
-    
-    TOOLBAR = '//div[contains(@id,"b-toolbar__right")]\
-        /div[not(contains(@style,"display: none"))]'
     DELETE = '//div[@data-name="remove"]'
     ARCHIVEDROP = '//div[contains(@data-shortcut,"archive")]'
     ARCHIVE = '//div[contains(@class,"b-dropdown__list")]/a'
     SPAM = '//div[@data-name="spam"]'
     SPAMPOOPUP = '//div[@class="is-confirmSpam_in"]//button[contains(@class,"confirm-cancel")]'
+    MORE = '//div[@class="b-sticky" and not (contains(@style,"visibility: hidden;"))]\
+        //div[@data-group="letter-more"]/div'
+    MOREREAD = '//a[@data-name="read"]'
+    MOREUNREAD = '//a[@data-name="unread"]'
+    FLAGYES = '//a[@data-name="flag_yes"]'
+    FLAGNO = '//a[@data-name="flag_no"]'
 
     def prev_letter_is_disabled(self):
         toolbar = self.driver.find_element_by_xpath(self.TOOLBAR)
@@ -109,43 +109,39 @@ class LetterToolbar(Component, WaitForPageLoad):
         return is_disabled == u'disabled'
 
     def get_prev_letter(self):
-        WebDriverWait(self.driver, 10, 0.1).until(
-            lambda d: d.find_elements_by_xpath(self.PREV)
+        WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_element_by_xpath(self.TOOLBAR)
         )
-
-        btns = self.driver.find_elements_by_xpath(self.PREV)
-        for btn in btns:
-            if "visibility: hidden" not in btn.find_element_by_xpath(self.TOOLBARPREV).get_attribute("style"):
-                with WaitForPageLoad(self.driver):
-                    btn.click()
-                break
+        with WaitForPageLoad(self.driver):
+            self.driver.find_element_by_xpath(self.TOOLBAR + self.PREV).click()
 
     def get_next_letter(self):
-        WebDriverWait(self.driver, 10, 0.1).until(
-            lambda d: d.find_elements_by_xpath(self.NEXT)
+        WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_element_by_xpath(self.TOOLBAR)
         )
-
-        prevBTNs = self.driver.find_elements_by_xpath(self.NEXT)
-        for btn in prevBTNs:
-            if "visibility: hidden" not in btn.find_element_by_xpath(self.TOOLBARPREV).get_attribute("style"):
-                with WaitForPageLoad(self.driver):
-                    btn.click()
-                break
+        with WaitForPageLoad(self.driver):
+            self.driver.find_element_by_xpath(self.TOOLBAR + self.NEXT).click()
 
     def reply(self):
-        toolbar = self.driver.find_element_by_xpath(self.TOOLBAR)
+        WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_element_by_xpath(self.TOOLBAR)
+        )
         with WaitForPageLoad(self.driver):
-            toolbar.find_element_by_xpath(self.REPLY).click()
+            self.driver.find_element_by_xpath(self.TOOLBAR + self.REPLY).click()
 
     def reply_all(self):
-        toolbar = self.driver.find_element_by_xpath(self.TOOLBAR)
+        WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_element_by_xpath(self.TOOLBAR)
+        )
         with WaitForPageLoad(self.driver):
-            toolbar.find_element_by_xpath(self.REPLYALL).click()
+            self.driver.find_element_by_xpath(self.TOOLBAR + self.REPLYALL).click()
 
     def forward(self):
-        toolbar = self.driver.find_element_by_xpath(self.TOOLBAR)
+        WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_element_by_xpath(self.TOOLBAR)
+        )
         with WaitForPageLoad(self.driver):
-            toolbar.find_element_by_xpath(self.FORWARD).click()
+            self.driver.find_element_by_xpath(self.TOOLBAR + self.FORWARD).click()
 
     def delete(self):
         WebDriverWait(self.driver, 30, 0.1).until(
@@ -176,3 +172,47 @@ class LetterToolbar(Component, WaitForPageLoad):
 
         with WaitForPageLoad(self.driver):
             self.driver.find_element_by_xpath(self.SPAMPOOPUP).click()
+
+    def more_unread(self):
+        WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_element_by_xpath(self.MORE)
+        )
+        self.driver.find_element_by_xpath(self.MORE).click()
+
+        WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_element_by_xpath(self.MOREUNREAD)
+        )
+        self.driver.find_element_by_xpath(self.MOREUNREAD).click()
+
+    def more_read(self):
+        WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_element_by_xpath(self.MORE)
+        )
+        self.driver.find_element_by_xpath(self.MORE).click()
+
+        WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_element_by_xpath(self.MOREREAD)
+        )
+        self.driver.find_element_by_xpath(self.MOREREAD).click()
+
+    def more_flag_yes(self):
+        WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_element_by_xpath(self.MORE)
+        )
+        self.driver.find_element_by_xpath(self.MORE).click()
+
+        WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_element_by_xpath(self.FLAGYES)
+        )
+        self.driver.find_element_by_xpath(self.FLAGYES).click()
+
+    def more_flag_no(self):
+        WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_element_by_xpath(self.MORE)
+        )
+        self.driver.find_element_by_xpath(self.MORE).click()
+
+        WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_element_by_xpath(self.FLAGNO)
+        )
+        self.driver.find_element_by_xpath(self.FLAGNO).click()

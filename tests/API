@@ -50,3 +50,7 @@ LetterPage.letter_toolbar.forward() -- переслать
 LetterPage.letter_toolbar.delete() -- удалить письмо
 LetterPage.letter_toolbar.archive() -- в архив
 LetterPage.letter_toolbar.spam() -- в спам
+LetterPage.letter_toolbar.more_unread() -- вкладка ЕЩЕ, пометить непрочитанным
+LetterPage.letter_toolbar.more_read() -- вкладка ЕЩЕ, пометить прочитанным
+LetterPage.letter_toolbar.more_flag_yes() -- вкладка ЕЩЕ, пометить флагом
+LetterPage.letter_toolbar.more_flag_no() -- вкладка ЕЩЕ, снять флаг

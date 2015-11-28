@@ -14,6 +14,9 @@ class SentPage(Page, ClearBoxMixin, WaitForPageLoad):
                 self.open()
 
     def open_letter(self, subject):
-        LETTER = '//a[@data-subject="'+subject+'"]'
+        LETTER = '//div[@class="b-layout  b-layout_flex"]\
+        //div[contains(@data-cache-key, "undefined") and not(contains(@style,"display: none"))]\
+        //a[@data-subject="'+subject+'"]'
+
         with WaitForPageLoad(self.driver):
             self.driver.find_element_by_xpath(LETTER).click()
