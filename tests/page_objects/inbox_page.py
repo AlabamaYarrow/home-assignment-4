@@ -52,9 +52,14 @@ class InboxPage(Page, ClearBoxMixin, WaitForPageLoad):
             lambda d: d.find_element_by_xpath(BUTTONSEND)
         )
 
-        with WaitForPageLoad(self.driver):
-            self.driver.find_element_by_xpath(BUTTONSEND).click()
+        try:
+            with WaitForPageLoad(self.driver):
+                self.driver.find_element_by_xpath(BUTTONSEND).click()
+        except TimeoutException:
+            with WaitForPageLoad(self.driver):
+                self.driver.find_element_by_xpath(BUTTONSEND).click()
 
+        
     def have_letter(self, subject):
         LETTER = '//a[@data-subject="'+subject+'"]'  
         try:
