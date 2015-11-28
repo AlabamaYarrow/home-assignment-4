@@ -6,6 +6,7 @@ import unittest
 from selenium.webdriver import DesiredCapabilities, Remote
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import TimeoutException
 
 
 USER_EMAIL = os.environ['TTHA4USER']
