@@ -3,7 +3,7 @@
 import sys
 import unittest
 
-from tests import navigation_test, reply_test, letter_data_test, flags_test, moving_test
+from tests import navigation_test, reply_test, letter_data_test, flags_test, moving_test, moar_test
 
 
 if __name__ == '__main__':
@@ -46,6 +46,13 @@ if __name__ == '__main__':
         unittest.makeSuite(moving_test.MoveToSpamTest),
         unittest.makeSuite(moving_test.MoveToArchiveTest),
         unittest.makeSuite(moving_test.MoveToTest),
+
+        unittest.makeSuite(moar_test.MoarMarkUnreadTest),
+        unittest.makeSuite(moar_test.MoarMarkReadTest),
+        unittest.makeSuite(moar_test.MoarUnsetFlagTest),
+        unittest.makeSuite(moar_test.MoarSetFlagTest),
+
+
     ))
     result = unittest.TextTestRunner().run(suite)
     sys.exit(not result.wasSuccessful())
