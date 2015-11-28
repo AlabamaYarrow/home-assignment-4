@@ -15,22 +15,28 @@ class InboxPage(Page, ClearBoxMixin, WaitForPageLoad):
         return Folders(self.driver)
 
     def send_letter(self, nameLetter, email_to="nikuda@mail.ru", email_copy=""):
-        SENTFORM = '//div[@id="b-compose"]'
+        SENTFORM = '//div[@id="b-compose" and not (contains(@style,"display: none;"))]'
         BUTTONSENDFROM = '//span[contains(text(), "Написать письмо")]'
-        BUTTONSEND = '//span[contains(text(), "Отправить")]'
-        EMAILFIELDTO = '//textarea[@data-original-name="To"]'
-        EMAILFIELDCOPY = '//textarea[@data-original-name="CC"]'
-        SUBJECTFIELD = '//input[@name="Subject"]'
-        BODYFRAME = '//iframe[starts-with(@id,"compose_")]'
+        BUTTONSEND = '//div[@class="b-sticky" and not (contains(@style,"visibility: hidden;"))]\
+            //div[@id="b-toolbar__right"]/div[not(contains(@style,"display: none;"))]//div[@data-name="send"]'
+        FORM = '//div[@id="b-compose" and not (contains(@style,"display: none;"))]'
+        EMAILFIELDTO = FORM + '//textarea[@data-original-name="To"]'
+        EMAILFIELDCOPY = FORM + '//textarea[@data-original-name="CC"]'
+        SUBJECTFIELD = FORM + '//input[@name="Subject"]'
+        BODYFRAME = FORM + '//iframe[starts-with(@id,"compose_")]'
         BODELETTER = '//body'
-        SENTSTATUS = '//div[@class="message-sent__title"]'
+        SENTSTATUS = '//div[@id="b-compose__sent" and not (contains(@style,"display: none;"))]\
+            //div[@class="message-sent__title"]'
+
+        WebDriverWait(self.driver, 30, 0.1).until(
+            lambda d: d.find_element_by_xpath(BUTTONSENDFROM)
+        )
 
         with WaitForPageLoad(self.driver):
             self.driver.find_element_by_xpath(BUTTONSENDFROM).click()
 
         WebDriverWait(self.driver, 30, 0.1).until(
             lambda d: d.find_element_by_xpath(SENTFORM)
-                and d.find_element_by_xpath(SENTFORM).get_attribute("style") != "display: none;"
         )
 
         self.driver.find_element_by_xpath(EMAILFIELDTO).send_keys(email_to)
