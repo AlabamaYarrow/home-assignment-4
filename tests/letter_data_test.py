@@ -29,7 +29,7 @@ class LetterDataCommon(object):
         )
 
 
-class LetterSubjectTest(unittest.TestCase, LetterDataCommon):
+class LetterDataTest(unittest.TestCase, LetterDataCommon):
 
     def setUp(self):
         self.driver = LetterDataCommon.get_driver()
@@ -38,7 +38,7 @@ class LetterSubjectTest(unittest.TestCase, LetterDataCommon):
         auth_page.authenticate()
         LetterDataCommon.fill_sent_box(self.driver)
 
-    def test(self):
+    def test_letter_subject(self):
         inbox_page = InboxPage(self.driver)
         inbox_page.folders.get_sent_inbox()
         sent_page = SentPage(self.driver)
@@ -49,20 +49,7 @@ class LetterSubjectTest(unittest.TestCase, LetterDataCommon):
         LetterDataCommon.clear_sent_box(self.driver)
         self.assertEquals(subject, '1')
 
-    def tearDown(self):
-        self.driver.quit()
-
-
-class LetterEmailFromTest(unittest.TestCase, LetterDataCommon):
-
-    def setUp(self):
-        self.driver = LetterDataCommon.get_driver()
-        auth_page = AuthPage(self.driver)
-        auth_page.open()
-        auth_page.authenticate()
-        LetterDataCommon.fill_sent_box(self.driver)
-
-    def test(self):
+    def test_letter_email_from(self):
         inbox_page = InboxPage(self.driver)
         inbox_page.folders.get_sent_inbox()
         sent_page = SentPage(self.driver)
@@ -73,20 +60,7 @@ class LetterEmailFromTest(unittest.TestCase, LetterDataCommon):
         LetterDataCommon.clear_sent_box(self.driver)
         self.assertEquals(email_from, USER_EMAIL)
 
-    def tearDown(self):
-        self.driver.quit()
-
-
-class LetterEmailToTest(unittest.TestCase, LetterDataCommon):
-
-    def setUp(self):
-        self.driver = LetterDataCommon.get_driver()
-        auth_page = AuthPage(self.driver)
-        auth_page.open()
-        auth_page.authenticate()
-        LetterDataCommon.fill_sent_box(self.driver)
-
-    def test(self):
+    def test_letter_email_to(self):
         inbox_page = InboxPage(self.driver)
         inbox_page.folders.get_sent_inbox()
         sent_page = SentPage(self.driver)
@@ -97,20 +71,7 @@ class LetterEmailToTest(unittest.TestCase, LetterDataCommon):
         LetterDataCommon.clear_sent_box(self.driver)
         self.assertEquals(email_to, 'nikuda@mail.ru')
 
-    def tearDown(self):
-        self.driver.quit()
-
-
-class LetterDatetimeExistsTest(unittest.TestCase, LetterDataCommon):
-
-    def setUp(self):
-        self.driver = LetterDataCommon.get_driver()
-        auth_page = AuthPage(self.driver)
-        auth_page.open()
-        auth_page.authenticate()
-        LetterDataCommon.fill_sent_box(self.driver)
-
-    def test(self):
+    def test_letter_datetime_exists(self):
         inbox_page = InboxPage(self.driver)
         inbox_page.folders.get_sent_inbox()
         sent_page = SentPage(self.driver)
@@ -121,20 +82,7 @@ class LetterDatetimeExistsTest(unittest.TestCase, LetterDataCommon):
         LetterDataCommon.clear_sent_box(self.driver)
         self.assertNotEquals(letter_date, '')
 
-    def tearDown(self):
-        self.driver.quit()
-
-
-class LetterBodyExistsTest(unittest.TestCase, LetterDataCommon):
-
-    def setUp(self):
-        self.driver = LetterDataCommon.get_driver()
-        auth_page = AuthPage(self.driver)
-        auth_page.open()
-        auth_page.authenticate()
-        LetterDataCommon.fill_sent_box(self.driver)
-
-    def test(self):
+    def test_body_exists(self):
         inbox_page = InboxPage(self.driver)
         inbox_page.folders.get_sent_inbox()
         sent_page = SentPage(self.driver)

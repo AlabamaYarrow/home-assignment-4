@@ -30,7 +30,7 @@ class MoarCommon(object):
         )
 
 
-class MoarMarkUnreadTest(unittest.TestCase, MoarCommon):
+class MoarTest(unittest.TestCase, MoarCommon):
 
     def setUp(self):
         self.driver = MoarCommon.get_driver()
@@ -39,7 +39,7 @@ class MoarMarkUnreadTest(unittest.TestCase, MoarCommon):
         auth_page.authenticate()
         MoarCommon.fill_inbox(self.driver)
 
-    def test(self):
+    def test_moar_mark_unread(self):
         inbox_page = InboxPage(self.driver)
         inbox_page.folders.get_sent_inbox()
         sent_page = SentPage(self.driver)
@@ -51,20 +51,7 @@ class MoarMarkUnreadTest(unittest.TestCase, MoarCommon):
         MoarCommon.clear_inbox(self.driver)
         self.assertEquals(read_status, False)
 
-    def tearDown(self):
-        self.driver.quit()
-
-
-class MoarMarkReadTest(unittest.TestCase, MoarCommon):
-
-    def setUp(self):
-        self.driver = MoarCommon.get_driver()
-        auth_page = AuthPage(self.driver)
-        auth_page.open()
-        auth_page.authenticate()
-        MoarCommon.fill_inbox(self.driver)
-
-    def test(self):
+    def test_moar_mark_read(self):
         inbox_page = InboxPage(self.driver)
         inbox_page.folders.get_sent_inbox()
         sent_page = SentPage(self.driver)
@@ -77,20 +64,7 @@ class MoarMarkReadTest(unittest.TestCase, MoarCommon):
         MoarCommon.clear_inbox(self.driver)
         self.assertEquals(read_status, True)
 
-    def tearDown(self):
-        self.driver.quit()
-
-
-class MoarSetFlagTest(unittest.TestCase, MoarCommon):
-
-    def setUp(self):
-        self.driver = MoarCommon.get_driver()
-        auth_page = AuthPage(self.driver)
-        auth_page.open()
-        auth_page.authenticate()
-        MoarCommon.fill_inbox(self.driver)
-
-    def test(self):
+    def test_moar_set_flag(self):
         inbox_page = InboxPage(self.driver)
         inbox_page.folders.get_sent_inbox()
         sent_page = SentPage(self.driver)
@@ -102,20 +76,7 @@ class MoarSetFlagTest(unittest.TestCase, MoarCommon):
         MoarCommon.clear_inbox(self.driver)
         self.assertEquals(is_flag_set, True)
 
-    def tearDown(self):
-        self.driver.quit()
-
-
-class MoarUnsetFlagTest(unittest.TestCase, MoarCommon):
-
-    def setUp(self):
-        self.driver = MoarCommon.get_driver()
-        auth_page = AuthPage(self.driver)
-        auth_page.open()
-        auth_page.authenticate()
-        MoarCommon.fill_inbox(self.driver)
-
-    def test(self):
+    def test_moar_unset_flag(self):
         inbox_page = InboxPage(self.driver)
         inbox_page.folders.get_sent_inbox()
         sent_page = SentPage(self.driver)
@@ -130,5 +91,3 @@ class MoarUnsetFlagTest(unittest.TestCase, MoarCommon):
 
     def tearDown(self):
         self.driver.quit()
-
-

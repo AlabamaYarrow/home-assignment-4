@@ -32,7 +32,7 @@ class FlagsCommon(object):
         )
 
 
-class SetFlagTest(unittest.TestCase, FlagsCommon):
+class FlagsTest(unittest.TestCase, FlagsCommon):
 
     def setUp(self):
         self.driver = FlagsCommon.get_driver()
@@ -41,7 +41,7 @@ class SetFlagTest(unittest.TestCase, FlagsCommon):
         auth_page.authenticate()
         FlagsCommon.fill_sent_box(self.driver)
 
-    def test(self):
+    def test_set_flag(self):
         inbox_page = InboxPage(self.driver)
         inbox_page.folders.get_recieved_inbox()
         sent_page = SentPage(self.driver)
@@ -53,20 +53,7 @@ class SetFlagTest(unittest.TestCase, FlagsCommon):
         FlagsCommon.clear_sent_box(self.driver)
         self.assertEquals(flag_set, True)
 
-    def tearDown(self):
-        self.driver.quit()
-
-
-class UnsetFlagTest(unittest.TestCase, FlagsCommon):
-
-    def setUp(self):
-        self.driver = FlagsCommon.get_driver()
-        auth_page = AuthPage(self.driver)
-        auth_page.open()
-        auth_page.authenticate()
-        FlagsCommon.fill_sent_box(self.driver)
-
-    def test(self):
+    def test_unset_flag(self):
         inbox_page = InboxPage(self.driver)
         inbox_page.folders.get_recieved_inbox()
         sent_page = SentPage(self.driver)
@@ -79,20 +66,7 @@ class UnsetFlagTest(unittest.TestCase, FlagsCommon):
         FlagsCommon.clear_sent_box(self.driver)
         self.assertEquals(flag_set, False)
 
-    def tearDown(self):
-        self.driver.quit()
-
-
-class SetReadTest(unittest.TestCase, FlagsCommon):
-
-    def setUp(self):
-        self.driver = FlagsCommon.get_driver()
-        auth_page = AuthPage(self.driver)
-        auth_page.open()
-        auth_page.authenticate()
-        FlagsCommon.fill_sent_box(self.driver)
-
-    def test(self):
+    def test_set_read(self):
         inbox_page = InboxPage(self.driver)
         inbox_page.folders.get_recieved_inbox()
         sent_page = SentPage(self.driver)
@@ -104,20 +78,7 @@ class SetReadTest(unittest.TestCase, FlagsCommon):
         FlagsCommon.clear_sent_box(self.driver)
         self.assertEquals(is_read, False)
 
-    def tearDown(self):
-        self.driver.quit()
-
-
-class UnsetReadTest(unittest.TestCase, FlagsCommon):
-
-    def setUp(self):
-        self.driver = FlagsCommon.get_driver()
-        auth_page = AuthPage(self.driver)
-        auth_page.open()
-        auth_page.authenticate()
-        FlagsCommon.fill_sent_box(self.driver)
-
-    def test(self):
+    def test_unset_read(self):
         inbox_page = InboxPage(self.driver)
         inbox_page.folders.get_recieved_inbox()
         sent_page = SentPage(self.driver)

@@ -28,7 +28,7 @@ class ReplyCommon(object):
         )
 
 
-class ReplyEmailToTest(unittest.TestCase, ReplyCommon):
+class ReplyTest(unittest.TestCase, ReplyCommon):
 
     def setUp(self):
         self.driver = ReplyCommon.get_driver()
@@ -37,7 +37,7 @@ class ReplyEmailToTest(unittest.TestCase, ReplyCommon):
         auth_page.authenticate()
         ReplyCommon.fill_inbox(self.driver)
 
-    def test(self):
+    def test_reply_email_to(self):
         inbox_page = InboxPage(self.driver)
         inbox_page.folders.get_sent_inbox()
         sent_page = SentPage(self.driver)
@@ -49,20 +49,7 @@ class ReplyEmailToTest(unittest.TestCase, ReplyCommon):
         ReplyCommon.clear_inbox(self.driver)
         self.assertEqual(email_to, 'nikuda@mail.ru')
 
-    def tearDown(self):
-        self.driver.quit()
-
-
-class ReplySubjectTest(unittest.TestCase, ReplyCommon):
-
-    def setUp(self):
-        self.driver = ReplyCommon.get_driver()
-        auth_page = AuthPage(self.driver)
-        auth_page.open()
-        auth_page.authenticate()
-        ReplyCommon.fill_inbox(self.driver)
-
-    def test(self):
+    def test_reply_subject(self):
         inbox_page = InboxPage(self.driver)
         inbox_page.folders.get_sent_inbox()
         sent_page = SentPage(self.driver)
@@ -75,21 +62,7 @@ class ReplySubjectTest(unittest.TestCase, ReplyCommon):
         ReplyCommon.clear_inbox(self.driver)
         self.assertEqual(subject, 'Re: 1')
 
-    def tearDown(self):
-        self.driver.quit()
-
-
-class ReplyMailTextTest(unittest.TestCase, ReplyCommon):
-
-    def setUp(self):
-        self.driver = ReplyCommon.get_driver()
-        auth_page = AuthPage(self.driver)
-        auth_page.open()
-        auth_page.authenticate()
-        inbox_page = InboxPage(self.driver)
-        inbox_page.send_letter('abrakadabra')
-
-    def test(self):
+    def test_reply_mail_text(self):
         inbox_page = InboxPage(self.driver)
         inbox_page.folders.get_sent_inbox()
         sent_page = SentPage(self.driver)
@@ -102,20 +75,7 @@ class ReplyMailTextTest(unittest.TestCase, ReplyCommon):
         ReplyCommon.clear_inbox(self.driver)
         self.assertTrue('abrakadabra' in body_text)
 
-    def tearDown(self):
-        self.driver.quit()
-
-
-class ReplyAllEmailToTest(unittest.TestCase, ReplyCommon):
-
-    def setUp(self):
-        self.driver = ReplyCommon.get_driver()
-        auth_page = AuthPage(self.driver)
-        auth_page.open()
-        auth_page.authenticate()
-        ReplyCommon.fill_inbox(self.driver)
-
-    def test(self):
+    def test_reply_all_email_to(self):
         inbox_page = InboxPage(self.driver)
         inbox_page.folders.get_sent_inbox()
         sent_page = SentPage(self.driver)
@@ -127,20 +87,7 @@ class ReplyAllEmailToTest(unittest.TestCase, ReplyCommon):
         ReplyCommon.clear_inbox(self.driver)
         self.assertEqual(email_to, 'nikuda@mail.ru')
 
-    def tearDown(self):
-        self.driver.quit()
-
-
-class ReplyAllSubjectTest(unittest.TestCase, ReplyCommon):
-
-    def setUp(self):
-        self.driver = ReplyCommon.get_driver()
-        auth_page = AuthPage(self.driver)
-        auth_page.open()
-        auth_page.authenticate()
-        ReplyCommon.fill_inbox(self.driver)
-
-    def test(self):
+    def test_reply_all_subject(self):
         inbox_page = InboxPage(self.driver)
         inbox_page.folders.get_sent_inbox()
         sent_page = SentPage(self.driver)
@@ -153,21 +100,7 @@ class ReplyAllSubjectTest(unittest.TestCase, ReplyCommon):
         ReplyCommon.clear_inbox(self.driver)
         self.assertEqual(subject, 'Re: 1')
 
-    def tearDown(self):
-        self.driver.quit()
-
-
-class ReplyAllMailTextTest(unittest.TestCase, ReplyCommon):
-
-    def setUp(self):
-        self.driver = ReplyCommon.get_driver()
-        auth_page = AuthPage(self.driver)
-        auth_page.open()
-        auth_page.authenticate()
-        inbox_page = InboxPage(self.driver)
-        inbox_page.send_letter('abrakadabra')
-
-    def test(self):
+    def test_reply_all_mail_text(self):
         inbox_page = InboxPage(self.driver)
         inbox_page.folders.get_sent_inbox()
         sent_page = SentPage(self.driver)
@@ -180,20 +113,7 @@ class ReplyAllMailTextTest(unittest.TestCase, ReplyCommon):
         ReplyCommon.clear_inbox(self.driver)
         self.assertTrue('abrakadabra' in body_text)
 
-    def tearDown(self):
-        self.driver.quit()
-
-
-class ForwardNoEmailToTest(unittest.TestCase, ReplyCommon):
-
-    def setUp(self):
-        self.driver = ReplyCommon.get_driver()
-        auth_page = AuthPage(self.driver)
-        auth_page.open()
-        auth_page.authenticate()
-        ReplyCommon.fill_inbox(self.driver)
-
-    def test(self):
+    def test_forward_no_email_to_test(self):
         inbox_page = InboxPage(self.driver)
         inbox_page.folders.get_sent_inbox()
         sent_page = SentPage(self.driver)
@@ -205,20 +125,7 @@ class ForwardNoEmailToTest(unittest.TestCase, ReplyCommon):
         ReplyCommon.clear_inbox(self.driver)
         self.assertEqual(email_to, '')
 
-    def tearDown(self):
-        self.driver.quit()
-
-
-class ForwardSubjectTest(unittest.TestCase, ReplyCommon):
-
-    def setUp(self):
-        self.driver = ReplyCommon.get_driver()
-        auth_page = AuthPage(self.driver)
-        auth_page.open()
-        auth_page.authenticate()
-        ReplyCommon.fill_inbox(self.driver)
-
-    def test(self):
+    def test_forward_subject(self):
         inbox_page = InboxPage(self.driver)
         inbox_page.folders.get_sent_inbox()
         sent_page = SentPage(self.driver)
@@ -231,21 +138,7 @@ class ForwardSubjectTest(unittest.TestCase, ReplyCommon):
         ReplyCommon.clear_inbox(self.driver)
         self.assertEqual(subject, 'Fwd: 1')
 
-    def tearDown(self):
-        self.driver.quit()
-
-
-class ForwardMailTextTest(unittest.TestCase, ReplyCommon):
-
-    def setUp(self):
-        self.driver = ReplyCommon.get_driver()
-        auth_page = AuthPage(self.driver)
-        auth_page.open()
-        auth_page.authenticate()
-        inbox_page = InboxPage(self.driver)
-        inbox_page.send_letter('abrakadabra')
-
-    def test(self):
+    def test_forward_email_text(self):
         inbox_page = InboxPage(self.driver)
         inbox_page.folders.get_sent_inbox()
         sent_page = SentPage(self.driver)

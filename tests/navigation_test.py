@@ -28,8 +28,7 @@ class NavigationCommon(object):
         )
 
 
-class NavigatePreviousTest(unittest.TestCase, NavigationCommon):
-
+class NavigateTest(unittest.TestCase, NavigationCommon):
     def setUp(self):
         self.driver = NavigationCommon.get_driver()
         auth_page = AuthPage(self.driver)
@@ -37,7 +36,7 @@ class NavigatePreviousTest(unittest.TestCase, NavigationCommon):
         auth_page.authenticate()
         NavigationCommon.fill_sent_box(self.driver)
 
-    def test(self):
+    def test_previous(self):
         inbox_page = InboxPage(self.driver)
         inbox_page.folders.get_sent_inbox()
         sent_page = SentPage(self.driver)
@@ -49,20 +48,7 @@ class NavigatePreviousTest(unittest.TestCase, NavigationCommon):
         NavigationCommon.clear_sent_box(self.driver)
         self.assertEquals(subject, '3')
 
-    def tearDown(self):
-        self.driver.quit()
-
-
-class NavigateMultiplePreviousTest(unittest.TestCase, NavigationCommon):
-
-    def setUp(self):
-        self.driver = NavigationCommon.get_driver()
-        auth_page = AuthPage(self.driver)
-        auth_page.open()
-        auth_page.authenticate()
-        NavigationCommon.fill_sent_box(self.driver)
-
-    def test(self):
+    def test_multiple_previous(self):
         inbox_page = InboxPage(self.driver)
         inbox_page.folders.get_sent_inbox()
         sent_page = SentPage(self.driver)
@@ -75,20 +61,7 @@ class NavigateMultiplePreviousTest(unittest.TestCase, NavigationCommon):
         NavigationCommon.clear_sent_box(self.driver)
         self.assertEquals(subject, '3')
 
-    def tearDown(self):
-        self.driver.quit()
-
-
-class NavigateReturnTest(unittest.TestCase, NavigationCommon):
-
-    def setUp(self):
-        self.driver = NavigationCommon.get_driver()
-        auth_page = AuthPage(self.driver)
-        auth_page.open()
-        auth_page.authenticate()
-        NavigationCommon.fill_sent_box(self.driver)
-
-    def test(self):
+    def test_previous_return(self):
         inbox_page = InboxPage(self.driver)
         inbox_page.folders.get_sent_inbox()
         sent_page = SentPage(self.driver)
@@ -102,20 +75,7 @@ class NavigateReturnTest(unittest.TestCase, NavigationCommon):
         NavigationCommon.clear_sent_box(self.driver)
         self.assertEquals('3', subject)
 
-    def tearDown(self):
-        self.driver.quit()
-
-
-class NavigateNoPrevTest(unittest.TestCase, NavigationCommon):
-
-    def setUp(self):
-        self.driver = NavigationCommon.get_driver()
-        auth_page = AuthPage(self.driver)
-        auth_page.open()
-        auth_page.authenticate()
-        NavigationCommon.fill_sent_box(self.driver)
-
-    def test(self):
+    def test_no_previous(self):
         inbox_page = InboxPage(self.driver)
         inbox_page.folders.get_sent_inbox()
         sent_page = SentPage(self.driver)
@@ -126,20 +86,7 @@ class NavigateNoPrevTest(unittest.TestCase, NavigationCommon):
         NavigationCommon.clear_sent_box(self.driver)
         self.assertEquals(True, is_disabled)
 
-    def tearDown(self):
-        self.driver.quit()
-
-
-class NavigateNextTest(unittest.TestCase, NavigationCommon):
-
-    def setUp(self):
-        self.driver = NavigationCommon.get_driver()
-        auth_page = AuthPage(self.driver)
-        auth_page.open()
-        auth_page.authenticate()
-        NavigationCommon.fill_sent_box(self.driver)
-
-    def test(self):
+    def test_next(self):
         inbox_page = InboxPage(self.driver)
         inbox_page.folders.get_sent_inbox()
         sent_page = SentPage(self.driver)
@@ -151,20 +98,7 @@ class NavigateNextTest(unittest.TestCase, NavigationCommon):
         NavigationCommon.clear_sent_box(self.driver)
         self.assertEquals('1', subject)
 
-    def tearDown(self):
-        self.driver.quit()
-
-
-class NavigateMultipleNextTest(unittest.TestCase, NavigationCommon):
-
-    def setUp(self):
-        self.driver = NavigationCommon.get_driver()
-        auth_page = AuthPage(self.driver)
-        auth_page.open()
-        auth_page.authenticate()
-        NavigationCommon.fill_sent_box(self.driver)
-
-    def test(self):
+    def test_multiple_next(self):
         inbox_page = InboxPage(self.driver)
         inbox_page.folders.get_sent_inbox()
         sent_page = SentPage(self.driver)
@@ -177,20 +111,7 @@ class NavigateMultipleNextTest(unittest.TestCase, NavigationCommon):
         NavigationCommon.clear_sent_box(self.driver)
         self.assertEquals('1', subject)
 
-    def tearDown(self):
-        self.driver.quit()
-
-
-class NavigateReturnNextTest(unittest.TestCase, NavigationCommon):
-
-    def setUp(self):
-        self.driver = NavigationCommon.get_driver()
-        auth_page = AuthPage(self.driver)
-        auth_page.open()
-        auth_page.authenticate()
-        NavigationCommon.fill_sent_box(self.driver)
-
-    def test(self):
+    def test_return_next(self):
         inbox_page = InboxPage(self.driver)
         inbox_page.folders.get_sent_inbox()
         sent_page = SentPage(self.driver)
@@ -203,20 +124,7 @@ class NavigateReturnNextTest(unittest.TestCase, NavigationCommon):
         NavigationCommon.clear_sent_box(self.driver)
         self.assertEquals('1', subject)
 
-    def tearDown(self):
-        self.driver.quit()
-
-
-class NavigateNoNextTest(unittest.TestCase, NavigationCommon):
-
-    def setUp(self):
-        self.driver = NavigationCommon.get_driver()
-        auth_page = AuthPage(self.driver)
-        auth_page.open()
-        auth_page.authenticate()
-        NavigationCommon.fill_sent_box(self.driver)
-
-    def test(self):
+    def test_no_next(self):
         inbox_page = InboxPage(self.driver)
         inbox_page.folders.get_sent_inbox()
         sent_page = SentPage(self.driver)

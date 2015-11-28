@@ -26,7 +26,7 @@ class MovingCommon(object):
         )
 
 
-class MoveToTrashTest(unittest.TestCase, MovingCommon):
+class MoveTest(unittest.TestCase, MovingCommon):
 
     def setUp(self):
         self.driver = MovingCommon.get_driver()
@@ -35,7 +35,7 @@ class MoveToTrashTest(unittest.TestCase, MovingCommon):
         auth_page.authenticate()
         MovingCommon.fill_inbox(self.driver)
 
-    def test(self):
+    def test_move_to_trash(self):
         inbox_page = InboxPage(self.driver)
         inbox_page.folders.get_sent_inbox()
         sent_page = SentPage(self.driver)
@@ -49,20 +49,7 @@ class MoveToTrashTest(unittest.TestCase, MovingCommon):
         MovingCommon.clear_inbox(self.driver)
         self.assertEquals(is_letter_present, True)
 
-    def tearDown(self):
-        self.driver.quit()
-
-
-class MoveToArchiveTest(unittest.TestCase, MovingCommon):
-
-    def setUp(self):
-        self.driver = MovingCommon.get_driver()
-        auth_page = AuthPage(self.driver)
-        auth_page.open()
-        auth_page.authenticate()
-        MovingCommon.fill_inbox(self.driver)
-
-    def test(self):
+    def test_move_to_archive(self):
         inbox_page = InboxPage(self.driver)
         inbox_page.folders.get_sent_inbox()
         sent_page = SentPage(self.driver)
@@ -76,20 +63,7 @@ class MoveToArchiveTest(unittest.TestCase, MovingCommon):
         MovingCommon.clear_inbox(self.driver)
         self.assertEquals(is_letter_present, True)
 
-    def tearDown(self):
-        self.driver.quit()
-
-
-class MoveToSpamTest(unittest.TestCase, MovingCommon):
-
-    def setUp(self):
-        self.driver = MovingCommon.get_driver()
-        auth_page = AuthPage(self.driver)
-        auth_page.open()
-        auth_page.authenticate()
-        MovingCommon.fill_inbox(self.driver)
-
-    def test(self):
+    def test_move_to_spam(self):
         inbox_page = InboxPage(self.driver)
         inbox_page.folders.get_sent_inbox()
         sent_page = SentPage(self.driver)
@@ -103,20 +77,7 @@ class MoveToSpamTest(unittest.TestCase, MovingCommon):
         MovingCommon.clear_inbox(self.driver)
         self.assertEquals(is_letter_present, True)
 
-    def tearDown(self):
-        self.driver.quit()
-
-
-class MoveToTest(unittest.TestCase, MovingCommon):
-
-    def setUp(self):
-        self.driver = MovingCommon.get_driver()
-        auth_page = AuthPage(self.driver)
-        auth_page.open()
-        auth_page.authenticate()
-        MovingCommon.fill_inbox(self.driver)
-
-    def test(self):
+    def test_move_to(self):
         inbox_page = InboxPage(self.driver)
         inbox_page.folders.get_sent_inbox()
         sent_page = SentPage(self.driver)
